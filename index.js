@@ -1,8 +1,8 @@
 const app = require("express")();
 const consign = require("consign");
-// const db = require("./config/db");
+const db = require("./config/db");
 
-// app.db = db; //knex
+app.db = db; //knex
 
 const port = 3000;
 consign()
@@ -13,6 +13,5 @@ consign()
   .into(app);
 
 app.listen(port, () => {
-  console.log(`Backend executando... 
-  acesse: http://localhost:${port} `);
+  console.log(`API executando... na porta: ${port} `);
 });
