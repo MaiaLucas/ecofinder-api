@@ -12,6 +12,8 @@ consign()
   // .then("./config/routes.js")
   .into(app);
 
-app.listen(port, () => {
-  console.log(`API executando... na porta: ${port} `);
-});
+// app.listen(port, () => {
+//   console.log(`API executando... na porta: ${port} `);
+// });
+
+app.listen(process.env.PORT || port);
