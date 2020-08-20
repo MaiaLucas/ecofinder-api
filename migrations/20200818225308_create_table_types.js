@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("types", (table) => {
-    table.increments("tps_id").primary();
-    table.string("tps_name").notNull();
+    table.increments("id").primary();
+    table.string("name").notNull();
   });
 };
 
