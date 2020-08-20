@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "node"
+    "start": "pm2 start index.js --name ecofinder-backend"
   },
   "author": "",
   "license": "ISC",
