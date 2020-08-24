@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  app.get("/health", app.api.user.save);
+  app.get("/health", app.api.health.work);
 
   app.post("/signup", app.api.user.save);
   app.post("/signin", app.api.auth.signin);
