@@ -13,7 +13,9 @@ consign()
   .into(app);
 
 app.get("/", (req, res) => {
-  res.send("Master working");
+  res.send("<h1>Master working</h1>");
 });
 
-app.listen(process.env.PORT || port);
+app.listen(process.env.PORT || port, () => {
+  console.log(`Listening on port: ${port}`);
+});
