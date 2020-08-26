@@ -1,7 +1,12 @@
 const bcrypt = require("bcrypt-nodejs");
 
 module.exports = (app) => {
-  const { existsOrError, notExistsOrError, equalsOrError } = app.api.validation;
+  const {
+    existsOrError,
+    notExistsOrError,
+    equalsOrError,
+    minMaxLength,
+  } = app.api.validation;
 
   const encryptPassword = (password) => {
     const salt = bcrypt.genSaltSync(10);
@@ -15,6 +20,12 @@ module.exports = (app) => {
     try {
       existsOrError(user.username, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
+      minMaxLength(
+        user.password,
+        8,
+        15,
+        "Senha deve ter no mínimo 8 e no máximo 15 caracteres"
+      );
       existsOrError(user.password, "Senha não informada");
       existsOrError(user.confirmPassword, "Confirmação de Senha inválida");
       equalsOrError(user.password, user.confirmPassword, "Senhas não conferem");
@@ -49,5 +60,13 @@ module.exports = (app) => {
     }
   };
 
-  return { save };
+  const listAll = (req, res) => {
+    app
+      .db("users")
+      .select("id", "username", "email")
+      .then((users) => res.json(users))
+      .catch((err) => res.status(500).send(err));
+  };
+
+  return { save, listAll };
 };
