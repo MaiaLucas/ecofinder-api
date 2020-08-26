@@ -4,7 +4,7 @@ const db = require("./config/db");
 
 app.db = db; //knex
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 consign()
   .then("./config/middlewares.js")
   .then("./api/validation.js")
@@ -16,6 +16,6 @@ app.get("/", (req, res) => {
   res.send("<h1>Master working</h1>");
 });
 
-app.listen(process.env.PORT || port, () => {
+app.listen(port, () => {
   console.log(`Listening on port: ${port}`);
 });
