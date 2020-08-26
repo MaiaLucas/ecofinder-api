@@ -18,5 +18,19 @@ module.exports = (app) => {
     if (valueA !== valueB) throw msg;
   }
 
-  return { existsOrError, notExistsOrError, equalsOrError };
+  function minMaxLength(value, min, max, msg) {
+    if (value.length < min || value.length > max) throw msg;
+  }
+
+  function isEmpty(value, msg) {
+    if (value.isArray && value.length === 0) throw msg;
+  }
+
+  return {
+    existsOrError,
+    notExistsOrError,
+    equalsOrError,
+    minMaxLength,
+    isEmpty,
+  };
 };
