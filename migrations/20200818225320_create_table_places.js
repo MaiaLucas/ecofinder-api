@@ -2,7 +2,7 @@ exports.up = function (knex) {
   return knex.schema.createTable("places", (table) => {
     table.increments("id").primary();
     table.string("title").notNull();
-    table.string("description", 1000).notNull();
+    table.string("description", 1000);
     table.string("images_url", 1000);
     table.string("address", 1000);
     table.string("state").notNull();
