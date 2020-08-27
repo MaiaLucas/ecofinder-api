@@ -13,4 +13,8 @@ module.exports = (app) => {
   app.get("/place/list", app.api.places.listAll);
   app.get("/place/:id", app.api.places.listById);
   app.get("/place/:id/list", app.api.places.listByType);
+
+  // Informativos
+  app.post("/info", app.api.info.save);
+  app.get("/info/list", app.api.info.listAll);
 };
