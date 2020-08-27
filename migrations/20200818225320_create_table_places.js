@@ -11,6 +11,8 @@ exports.up = function (knex) {
     table.string("hr_init").notNull();
     table.string("hr_final").notNull();
     table.string("opening_days").notNull();
+    table.dateTime("create_at").notNull();
+    table.dateTime("update_at").notNull();
 
     // chaves estrangeiras
     table.integer("author").references("id").inTable("users").notNull();

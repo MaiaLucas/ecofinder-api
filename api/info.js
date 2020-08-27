@@ -15,6 +15,7 @@ module.exports = (app) => {
     }
 
     if (info.id) {
+      info.update_at = new Date(Date.now());
       app
         .db("information")
         .update(info)
@@ -25,6 +26,8 @@ module.exports = (app) => {
         .then((_) => res.status(200).send("Alterado com sucesso!"))
         .catch((err) => res.status(500).send(err));
     } else {
+      info.create_at = new Date(Date.now());
+      info.update_at = new Date(Date.now());
       app
         .db("information")
         .insert(info)

@@ -4,6 +4,8 @@ exports.up = function (knex) {
     table.string("title").notNull();
     table.string("description", 1000).notNull();
     table.string("image_url", 1000);
+    table.dateTime("create_at").notNull();
+    table.dateTime("update_at").notNull();
 
     // chaves estrangeiras
     table.integer("author").references("id").inTable("users").notNull();

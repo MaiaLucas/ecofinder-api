@@ -4,6 +4,8 @@ exports.up = function (knex) {
     table.string("username").notNull();
     table.string("email").notNull().unique();
     table.string("password").notNull();
+    table.dateTime("create_at").notNull();
+    table.dateTime("update_at").notNull();
   });
 };
 

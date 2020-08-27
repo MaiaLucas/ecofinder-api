@@ -42,8 +42,10 @@ module.exports = (app) => {
     }
 
     user.password = encryptPassword(user.password);
+
     delete user.confirmPassword;
     if (user.id) {
+      user.update_at = new Date(Date.now());
       app
         .db("users")
         .update(user)
@@ -52,6 +54,8 @@ module.exports = (app) => {
         .then((_) => res.status(204).send())
         .catch((err) => res.status(500).send(err));
     } else {
+      user.create_at = new Date(Date.now());
+      user.update_at = new Date(Date.now());
       app
         .db("users")
         .insert(user)
