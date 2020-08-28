@@ -1,4 +1,4 @@
-const { db } = require("./.env.develop");
+const { db } = process.env.DATABASE_URL || require("./.env.develop");
 
 module.exports = {
   development: {
