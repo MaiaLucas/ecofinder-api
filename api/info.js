@@ -42,6 +42,7 @@ module.exports = (app) => {
     app
       .db("information")
       .select("*")
+      .orderBy("create_at", "desc")
       .then((information) => res.json(information))
       .catch((err) => res.status(500).send(err));
   };
@@ -58,14 +59,23 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   };
 
-  const listByTitle = (req, res) => {
+  const listByTitle = async (req, res) => {
+    const query = await app.db.raw(
+      `
+          SELECT * 
+          FROM information 
+          WHERE 
+            LOWER(title) LIKE LOWER('%${req.params.title.toLowerCase()}%')
+        `
+    );
+    const ids = query.rows.map((c) => c.id);
+
     app
       .db("information")
       .select("*")
-      .where({
-        title: req.params.title,
-      })
-      .then((places) => res.json(places))
+      .whereIn("id", ids)
+      .orderBy("create_at", "desc")
+      .then((info) => res.json(info))
       .catch((err) => res.status(500).send(err));
   };
 

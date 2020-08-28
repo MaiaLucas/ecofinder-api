@@ -67,5 +67,25 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   };
 
-  return { save, listAll, listByType, listById };
+  const listByLocal = async (req, res) => {
+    const places = await app.db.raw(
+      `
+        SELECT * 
+        FROM places 
+        WHERE 
+          LOWER(city) LIKE LOWER('%${req.params.place.toLowerCase()}%')
+          or LOWER(state) LIKE LOWER('%${req.params.place.toLowerCase()}%')
+      `
+    );
+    const ids = places.rows.map((c) => c.id);
+
+    app
+      .db("places")
+      .whereIn("id", ids)
+      .orderBy("create_at", "desc")
+      .then((places) => res.json(places))
+      .catch((err) => res.status(500).send(err));
+  };
+
+  return { save, listAll, listByType, listById, listByLocal };
 };
