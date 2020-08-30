@@ -27,10 +27,11 @@ module.exports = {
     client: "pg",
     connection: process.env.DATABASE_URL,
     migrations: {
-      tableName: "knex_migrations",
+      // tableName: "knex_migrations",
+      directory: __dirname + "/migrations",
     },
     seeds: {
-      directory: "./seeds",
+      directory: __dirname + "/seeds",
     },
   },
 };
