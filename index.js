@@ -8,8 +8,8 @@ const port = process.env.PORT || 3000;
 consign()
   .then("./config/middlewares.js")
   .then("./api/validation.js")
-  // .then("./api")
-  // .then("./config/routes.js")
+  .then("./api")
+  .then("./config/routes.js")
   .into(app);
 
 app.get("/", (req, res) => {
