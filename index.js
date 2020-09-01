@@ -6,6 +6,7 @@ app.db = db; //knex
 
 const port = process.env.PORT || 3000;
 consign()
+  .include("./config/passport.js")
   .then("./config/middlewares.js")
   .then("./api/validation.js")
   .then("./api")
