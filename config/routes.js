@@ -3,23 +3,46 @@ module.exports = (app) => {
 
   app.post("/signup", app.api.user.save);
   app.post("/signin", app.api.auth.signin);
+  app.post("/validateToken", app.api.auth.validateToken);
 
   // Usuários
-  app.post("/user", app.api.user.save, app.config.passport.authenticate());
-  app.get(
-    "/user/list",
-    app.api.user.listAll,
-    app.config.passport.authenticate()
-  );
+  app
+    .route("/user")
+    .all(app.config.passport.authenticate())
+    .post(app.api.user.save)
+    .get(app.api.user.listAll);
+
+  app
+    .route("/user/:id")
+    .all(app.config.passport.authenticate())
+    .put(app.api.user.save)
+    .get(app.api.user.listById);
 
   // Locais
-  app.post("/place", app.api.places.save, app.config.passport.authenticate());
-  app.get("/place/list", app.api.places.listAll);
+  app
+    .route("/place")
+    .post(app.config.passport.authenticate(), app.api.places.save)
+    .get(app.api.places.listAll);
+
   app.get("/place/list/:place", app.api.places.listByLocal);
-  app.get("/place/:id", app.api.places.listById);
+
+  app
+    .route("/place/:id")
+    .get(app.api.places.listById)
+    .put(app.config.passport.authenticate(), app.api.places.save)
+    .delete(app.config.passport.authenticate(), app.api.places.remove);
+
   app.get("/place/:id/list", app.api.places.listByType);
 
   // Informativos
-  app.post("/info", app.api.info.save, app.config.passport.authenticate());
-  app.get("/info/list", app.api.info.listAll);
+  app
+    .route("/info")
+    .post(app.config.passport.authenticate(), app.api.info.save)
+    .get(app.api.info.listAll);
+
+  app
+    .route("/info/:id")
+    .put(app.config.passport.authenticate(), app.api.info.save)
+    .get(app.api.info.listAll)
+    .delete(app.config.passport.authenticate(), app.api.info.remove);
 };

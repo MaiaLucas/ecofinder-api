@@ -25,7 +25,7 @@ module.exports = (app) => {
         .db("places")
         .update(place)
         .where({ id: place.id })
-        .whereNull("deletedAt")
+        // .whereNull("deletedAt")
         .then((_) => res.status(200).send("Alterado com sucesso!"))
         .catch((err) => res.status(500).send(err));
     } else {
@@ -87,5 +87,24 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   };
 
-  return { save, listAll, listByType, listById, listByLocal };
+  const remove = async (req, res) => {
+    try {
+      const rowsDeleted = await app
+        .db("places")
+        .where({ id: req.params.id })
+        .del();
+
+      try {
+        existsOrError(rowsDeleted, "Resultado não foi encontrado.");
+      } catch (msg) {
+        return res.status(400).send(msg);
+      }
+
+      res.status(204).send();
+    } catch (msg) {
+      res.status(500).send(msg);
+    }
+  };
+
+  return { save, listAll, listByType, listById, listByLocal, remove };
 };

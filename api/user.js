@@ -27,14 +27,19 @@ module.exports = (app) => {
         "Senha deve ter no mínimo 8 e no máximo 15 caracteres"
       );
       existsOrError(user.password, "Senha não informada");
-      existsOrError(user.confirmPassword, "Confirmação de Senha inválida");
-      equalsOrError(user.password, user.confirmPassword, "Senhas não conferem");
 
-      const userFromDB = await app
-        .db("users")
-        .where({ email: user.email })
-        .first();
       if (!user.id) {
+        existsOrError(user.confirmPassword, "Confirmação de Senha inválida");
+        equalsOrError(
+          user.password,
+          user.confirmPassword,
+          "Senhas não conferem"
+        );
+
+        const userFromDB = await app
+          .db("users")
+          .where({ email: user.email })
+          .first();
         notExistsOrError(userFromDB, "Usuário já cadastrado");
       }
     } catch (msg) {
@@ -50,8 +55,8 @@ module.exports = (app) => {
         .db("users")
         .update(user)
         .where({ id: user.id })
-        .whereNull("deletedAt")
-        .then((_) => res.status(204).send())
+        // .whereNull("deletedAt")
+        .then((_) => res.status(200).send("Usuário alterado com sucesso!"))
         .catch((err) => res.status(500).send(err));
     } else {
       user.create_at = new Date(Date.now());
@@ -72,5 +77,14 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   };
 
-  return { save, listAll };
+  const listById = (req, res) => {
+    app
+      .db("users")
+      .select("id", "username", "email")
+      .where({ id: req.params.id })
+      .then((users) => res.json(users))
+      .catch((err) => res.status(500).send(err));
+  };
+
+  return { save, listAll, listById };
 };
