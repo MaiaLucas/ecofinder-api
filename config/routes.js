@@ -45,4 +45,8 @@ module.exports = (app) => {
     .put(app.config.passport.authenticate(), app.api.info.save)
     .get(app.api.info.listAll)
     .delete(app.config.passport.authenticate(), app.api.info.remove);
+
+  // Tipos
+  app.route("/type").get(app.api.types.listAll);
+  app.route("/type/:id").get(app.api.types.listById);
 };
