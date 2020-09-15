@@ -7,19 +7,19 @@ exports.seed = function (knex) {
       return knex("users").insert([
         {
           id: 1,
-          email: "lustosa@gmail.com",
-          username: "Emilly",
+          email: "maria@email.com",
+          username: "Maria",
           password:
-            "$2y$10$So5NOYW0OJkLf5t3MUaMEuPcyMksxLnzbTWpsyd2gkBpZ.sIjM71S",
+            "$2a$10$c8Alsq1FDvbLEOP4cL0bAe/7K9kHM2EsYVxSfS4.v5LRl.OLVKgbq",
           create_at: new Date(Date.now()),
           update_at: new Date(Date.now()),
         },
         {
           id: 2,
-          email: "lucas@gmail.com",
-          username: "Lucas",
+          email: "joao1234@gmail.com",
+          username: "João Henrique",
           password:
-            "$2y$10$9TNhnkRdbJKbDXe9P.6DUekUUWYla0HnZ.FefcTo3QbFkZjz5zULW",
+            "$2a$10$U4UbnKNz9BelWuOLPVcfxujuqvmgjQautlGPJCa9sH9iMM7jHh4Wi",
           create_at: new Date(Date.now()),
           update_at: new Date(Date.now()),
         },
