@@ -19,7 +19,8 @@ module.exports = (app) => {
   }
 
   function minMaxLength(value, min, max, msg) {
-    if (value.length < min || value.length > max) throw msg;
+    let decimal = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    if (!value.match(decimal)) throw msg;
   }
 
   function isEmpty(value, msg) {

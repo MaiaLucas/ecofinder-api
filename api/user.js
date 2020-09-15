@@ -24,7 +24,7 @@ module.exports = (app) => {
         user.password,
         8,
         15,
-        "Senha deve ter no mínimo 8 e no máximo 15 caracteres"
+        "Senha deve conter entre 8 e 15 caracteres, contando com Letras maúsculas, minúsculas e caracteres especiais"
       );
       existsOrError(user.password, "Senha não informada");
 
@@ -80,7 +80,8 @@ module.exports = (app) => {
   const listById = (req, res) => {
     app
       .db("users")
-      .select("id", "username", "email")
+      // .select("id", "username", "email")
+      .select("*")
       .where({ id: req.params.id })
       .then((users) => res.json(users))
       .catch((err) => res.status(500).send(err));
