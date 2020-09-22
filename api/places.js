@@ -87,6 +87,30 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   };
 
+  const listByLocalType = async (req, res) => {
+    const places = await app.db.raw(
+      `
+        SELECT * 
+        FROM places
+        WHERE type = ${req.params.id}
+        ${
+          req.params.place.toLowerCase() != undefined
+            ? `AND (LOWER(city) LIKE LOWER('%${req.params.place.toLowerCase()}%')
+        OR LOWER(state) LIKE LOWER('%${req.params.place.toLowerCase()}%'))`
+            : ""
+        } 
+      `
+    );
+    const ids = places.rows.map((c) => c.id);
+
+    app
+      .db("places")
+      .whereIn("id", ids)
+      .orderBy("create_at", "desc")
+      .then((places) => res.json(places))
+      .catch((err) => res.status(500).send(err));
+  };
+
   const remove = async (req, res) => {
     try {
       const rowsDeleted = await app
@@ -106,5 +130,13 @@ module.exports = (app) => {
     }
   };
 
-  return { save, listAll, listByType, listById, listByLocal, remove };
+  return {
+    save,
+    listAll,
+    listByType,
+    listById,
+    listByLocal,
+    listByLocalType,
+    remove,
+  };
 };

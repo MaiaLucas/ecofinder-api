@@ -25,6 +25,7 @@ module.exports = (app) => {
     .get(app.api.places.listAll);
 
   app.get("/place/list/:place", app.api.places.listByLocal);
+  app.get("/place/:id/list/:place", app.api.places.listByLocalType);
 
   app
     .route("/place/:id")
