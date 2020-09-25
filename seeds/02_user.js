@@ -1,3 +1,5 @@
+const { uuid } = require("uuidv4");
+
 exports.seed = function (knex) {
   // Deletes ALL existing entries
   return knex("users")
@@ -6,7 +8,7 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex("users").insert([
         {
-          id: 1,
+          id: uuid(),
           email: "maria@email.com",
           username: "Maria",
           password:
@@ -15,7 +17,7 @@ exports.seed = function (knex) {
           update_at: new Date(Date.now()),
         },
         {
-          id: 2,
+          id: uuid(),
           email: "joao1234@gmail.com",
           username: "João Henrique",
           password:

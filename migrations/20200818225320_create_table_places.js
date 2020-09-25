@@ -15,7 +15,7 @@ exports.up = function (knex) {
     table.dateTime("update_at").notNull();
 
     // chaves estrangeiras
-    table.integer("author").references("id").inTable("users").notNull();
+    table.string("author").references("id").inTable("users").notNull();
     table.integer("type").references("id").inTable("types").notNull();
   });
 };

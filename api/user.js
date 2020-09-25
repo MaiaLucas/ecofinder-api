@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt-nodejs");
+const { uuid } = require("uuidv4");
 
 module.exports = (app) => {
   const {
@@ -14,6 +15,7 @@ module.exports = (app) => {
   };
 
   const save = async (req, res) => {
+    // console.log(uuid());
     const user = { ...req.body };
     if (req.params.id) user.id = req.params.id;
 
@@ -61,6 +63,7 @@ module.exports = (app) => {
     } else {
       user.create_at = new Date(Date.now());
       user.update_at = new Date(Date.now());
+      user.id = uuid();
       app
         .db("users")
         .insert(user)

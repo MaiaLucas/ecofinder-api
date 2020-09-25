@@ -4,7 +4,7 @@ const db = require("./config/db");
 
 app.db = db; //knex
 
-const port = process.env.PORT || 4040;
+const port = process.env.PORT || 3333;
 consign()
   .include("./config/passport.js")
   .then("./config/middlewares.js")
