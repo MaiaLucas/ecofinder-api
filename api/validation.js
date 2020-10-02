@@ -24,7 +24,7 @@ module.exports = (app) => {
   }
 
   function isEmpty(value, msg) {
-    if (value.isArray && value.length === 0) throw msg;
+    if (value.isArray || value.length === 0) throw msg;
   }
 
   return {

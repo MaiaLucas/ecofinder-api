@@ -4,6 +4,8 @@ module.exports = (app) => {
   const save = (req, res) => {
     const place = { ...req.body };
     if (req.params.id) place.id = req.params.id;
+
+    console.log(place);
     try {
       isEmpty(place.title, "Campo Título é obrigatório");
       isEmpty(place.state, "Campo Estado é obrigatório");
@@ -15,7 +17,9 @@ module.exports = (app) => {
       isEmpty(place.author, "Campo Autor é obrigatório");
       isEmpty(place.type, "Campo Type é obrigatório");
     } catch (msg) {
-      return res.status(400).send(msg);
+      console.log(msg);
+      // return res.send(msg);
+      return res.status(400).json({ code: 400, message: msg });
     }
 
     if (place.id) {
@@ -26,7 +30,11 @@ module.exports = (app) => {
         .update(place)
         .where({ id: place.id })
         // .whereNull("deletedAt")
-        .then((_) => res.status(200).send("Alterado com sucesso!"))
+        .then((_) =>
+          res
+            .status(200)
+            .json({ code: 200, message: "Local alterado com sucesso!" })
+        )
         .catch((err) => res.status(500).send(err));
     } else {
       place.create_at = new Date(Date.now());
@@ -35,7 +43,11 @@ module.exports = (app) => {
       app
         .db("places")
         .insert(place)
-        .then((_) => res.status(200).send("Local cadastrado com Sucesso!"))
+        .then((_) =>
+          res
+            .status(200)
+            .json({ code: 200, message: "Local cadastrado com sucesso!" })
+        )
         .catch((err) => res.status(500).send(err));
     }
   };

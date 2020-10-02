@@ -45,7 +45,7 @@ module.exports = (app) => {
         notExistsOrError(userFromDB, "Usuário já cadastrado");
       }
     } catch (msg) {
-      return res.status(400).send(msg);
+      return res.status(400).json({ code: 400, message: msg });
     }
 
     user.password = encryptPassword(user.password);
@@ -58,8 +58,8 @@ module.exports = (app) => {
         .update(user)
         .where({ id: user.id })
         // .whereNull("deletedAt")
-        .then((_) => res.status(200).send("Usuário alterado com sucesso!"))
-        .catch((err) => res.status(500).send(err));
+        .then((_) => res.status(201).send())
+        .catch((err) => res.status(500).json({ ...err }));
     } else {
       user.create_at = new Date(Date.now());
       user.update_at = new Date(Date.now());
@@ -68,7 +68,7 @@ module.exports = (app) => {
         .db("users")
         .insert(user)
         .then((_) => res.status(200).send("Usuário Cadastrado com Sucesso!"))
-        .catch((err) => res.status(500).send(err));
+        .catch((err) => res.status(500).json(err));
     }
   };
 

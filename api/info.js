@@ -11,7 +11,7 @@ module.exports = (app) => {
       isEmpty(info.description, "Campo Descrição é obrigatório");
       isEmpty(info.author, "Campo Autor é obrigatório");
     } catch (msg) {
-      return res.status(400).send(msg);
+      return res.status(400).json({ code: 400, message: msg });
     }
 
     if (info.id) {
@@ -23,8 +23,10 @@ module.exports = (app) => {
           id: info.id,
         })
         // .whereNull("deletedAt")
-        .then((_) => res.status(200).send("Alterado com sucesso!"))
-        .catch((err) => res.status(500).send(err));
+        .then((_) =>
+          res.status(200).json({ code: 200, message: "Alterado com sucesso!" })
+        )
+        .catch((err) => res.status(500).json({ code: 500, message: msg }));
     } else {
       info.create_at = new Date(Date.now());
       info.update_at = new Date(Date.now());
@@ -32,9 +34,11 @@ module.exports = (app) => {
         .db("information")
         .insert(info)
         .then((_) =>
-          res.status(200).send("Informativo cadastrado com Sucesso!")
+          res
+            .status(200)
+            .json({ code: 200, message: "Informativo cadastrado com Sucesso!" })
         )
-        .catch((err) => res.status(500).send(err));
+        .catch((err) => res.status(500).json({ code: 500, message: msg }));
     }
   };
 

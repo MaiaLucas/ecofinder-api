@@ -5,15 +5,23 @@ require("dotenv").config();
 module.exports = (app) => {
   const signin = async (req, res) => {
     if (!req.body.email || !req.body.password)
-      return res.status(400).send("Favor informar email e senha!");
+      return res
+        .status(400)
+        .json({ code: 400, message: "Favor informar email e senha!" });
 
     const user = await app.db("users").where({ email: req.body.email }).first();
 
-    if (!user) return res.status(400).send("Usuário não encontrado");
+    if (!user)
+      return res
+        .status(400)
+        .json({ code: 400, message: "Usuário não encontrado" });
 
     const isMatch = bcrypt.compareSync(req.body.password, user.password);
 
-    if (!isMatch) return res.status(401).send("Email/Senha inválidos");
+    if (!isMatch)
+      return res
+        .status(401)
+        .json({ code: 401, message: "Email/Senha inválidos" });
 
     const now = Math.floor(Date.now() / 1000);
 
