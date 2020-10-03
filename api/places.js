@@ -94,8 +94,10 @@ module.exports = (app) => {
     app
       .db("places")
       .whereIn("id", ids)
-      .orderBy("create_at", "desc")
-      .then((places) => res.json(places))
+      .orderBy("type", "asc")
+      .then((places) => {
+        res.json(places);
+      })
       .catch((err) => res.status(500).send(err));
   };
 
