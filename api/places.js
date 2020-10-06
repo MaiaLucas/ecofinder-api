@@ -96,7 +96,19 @@ module.exports = (app) => {
       .whereIn("id", ids)
       .orderBy("type", "asc")
       .then((places) => {
-        res.json(places);
+        let garbage = [];
+        let experience = [];
+        let store = [];
+        places.forEach((place) => {
+          if (place.type === 1) {
+            garbage.push(place);
+          } else if (place.type === 2) {
+            experience.push(place);
+          } else {
+            store.push(place);
+          }
+        });
+        res.json([garbage, experience, store]);
       })
       .catch((err) => res.status(500).send(err));
   };
