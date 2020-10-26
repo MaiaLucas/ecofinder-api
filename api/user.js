@@ -76,8 +76,6 @@ module.exports = (app) => {
 				)
 				.catch((err) => res.status(500).json(err));
 		}
-
-		console.log(listAll(req, res));
 	};
 
 	const listAll = (req, res) => {
