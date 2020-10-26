@@ -50,8 +50,10 @@ module.exports = (app) => {
 			return res.status(400).json({ code: 400, message: msg });
 		}
 
+		console.log(user.password);
 		user.password = encryptPassword(user.password);
 
+		console.log(user.password);
 		delete user.confirmPassword;
 		if (user.id) {
 			user.update_at = new Date(Date.now());
