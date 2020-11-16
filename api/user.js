@@ -51,6 +51,7 @@ module.exports = (app) => {
 		user.password = encryptPassword(user.password);
 
 		delete user.confirmPassword;
+		delete user.confirmEmail;
 		if (user.id) {
 			user.update_at = new Date(Date.now());
 			app
@@ -58,8 +59,13 @@ module.exports = (app) => {
 				.update(user)
 				.where({ id: user.id })
 				// .whereNull("deletedAt")
-				.then((_) => res.status(200).json({ message: "Alterado com sucesso" }))
-				.catch((err) => res.status(500).json(err));
+				.then((_) => {
+					res.status(200).json({ message: "Alterado com sucesso" });
+				})
+				.catch((err) => {
+					console.log(err);
+					res.status(500).json(err);
+				});
 		} else {
 			user.create_at = new Date(Date.now());
 			user.update_at = new Date(Date.now());
