@@ -19,8 +19,6 @@ module.exports = (app) => {
 		const user = { ...req.body };
 		if (req.params.id) user.id = req.params.id;
 
-		console.log(user);
-
 		try {
 			existsOrError(user.username, "Nome não informado");
 			existsOrError(user.email, "E-mail não informado");
@@ -47,13 +45,11 @@ module.exports = (app) => {
 				notExistsOrError(userFromDB, "Usuário já cadastrado");
 			}
 		} catch (msg) {
-			return res.status(400).json({ code: 400, message: msg });
+			return res.status(400).json({ message: msg });
 		}
 
-		console.log(user.password);
 		user.password = encryptPassword(user.password);
 
-		console.log(user.password);
 		delete user.confirmPassword;
 		if (user.id) {
 			user.update_at = new Date(Date.now());
@@ -62,9 +58,7 @@ module.exports = (app) => {
 				.update(user)
 				.where({ id: user.id })
 				// .whereNull("deletedAt")
-				.then((_) =>
-					res.status(200).json({ code: 200, message: "Alterado com sucesso" })
-				)
+				.then((_) => res.status(200).json({ message: "Alterado com sucesso" }))
 				.catch((err) => res.status(500).json(err));
 		} else {
 			user.create_at = new Date(Date.now());
@@ -74,7 +68,7 @@ module.exports = (app) => {
 				.db("users")
 				.insert(user)
 				.then((_) =>
-					res.status(200).json({ code: 200, message: "Cadastrado com sucesso" })
+					res.status(200).json({ message: "Cadastrado com sucesso" })
 				)
 				.catch((err) => res.status(500).json(err));
 		}
