@@ -120,6 +120,7 @@ module.exports = (app) => {
         FROM places 
         WHERE 
           LOWER(city) LIKE LOWER('%${req.params.city.toLowerCase()}%')
+        GROUP BY city
       `
 		);
 		const ids = places.rows.map((c) => c.id);
@@ -127,8 +128,7 @@ module.exports = (app) => {
 		app
 			.db("places")
 			.whereIn("id", ids)
-			.orderBy("type", "asc")
-			.groupBy("city")
+			.orderBy("city", "asc")
 			.then((places) => {
 				res.json(places);
 			})
