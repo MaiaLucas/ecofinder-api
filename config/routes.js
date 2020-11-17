@@ -24,6 +24,7 @@ module.exports = (app) => {
 		.post(app.config.passport.authenticate(), app.api.places.save)
 		.get(app.api.places.listAll);
 
+	app.get("/place/:city", app.api.places.listByCity);
 	app.get("/place/list/:place", app.api.places.listByLocal);
 	app.get("/place/:id/list/:place", app.api.places.listByLocalType);
 
