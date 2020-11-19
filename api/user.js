@@ -15,7 +15,6 @@ module.exports = (app) => {
 	};
 
 	const save = async (req, res) => {
-		// console.log(uuid());
 		const user = { ...req.body };
 		if (req.params.id) user.id = req.params.id;
 
@@ -45,13 +44,11 @@ module.exports = (app) => {
 				notExistsOrError(userFromDB, "Usuário já cadastrado");
 			}
 		} catch (msg) {
-			return res.sendStatus(400).json({ message: msg });
+			return res.json({ status: 400, message: msg });
 		}
-
 		user.password = encryptPassword(user.password);
 
 		delete user.confirmPassword;
-		delete user.confirmEmail;
 		if (user.id) {
 			user.update_at = new Date(Date.now());
 			app
@@ -63,7 +60,6 @@ module.exports = (app) => {
 					res.status(200).json({ message: "Alterado com sucesso" });
 				})
 				.catch((err) => {
-					console.log(err);
 					res.status(500).json(err);
 				});
 		} else {
