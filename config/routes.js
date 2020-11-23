@@ -1,6 +1,9 @@
-module.exports = (app) => {
-  app.get("/health", app.api.health.work);
+const multer = require('multer')
+const multerConfig = require('./multer')
 
+module.exports = (app) => {
+
+  app.get("/health", app.api.health.work);
   app.post("/signup", app.api.user.save);
   app.post("/signin", app.api.auth.signin);
   app.post("/validateToken", app.api.auth.validateToken);
@@ -50,4 +53,14 @@ module.exports = (app) => {
   // Tipos
   app.route("/type").get(app.api.types.listAll);
   app.route("/type/:id").get(app.api.types.listById);
+
+  // upload images
+  app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
+    
+    console.log(req.file)
+  
+    return res.json({ massage: "Upload image" });
+  });
+
 };
+

@@ -6,8 +6,8 @@ const ExtractJwt = passportJwt.ExtractJwt;
 
 module.exports = (app) => {
   const params = {
-    secretOrKey: process.env.AUTH_SECRET,
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: 'secretOrKey',
   };
 
   const strategy = new JwtStrategy(params, (payload, done) => {

@@ -1,4 +1,4 @@
-const { uuid } = require("uuidv4");
+ const { uuid } = require("uuidv4");
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
