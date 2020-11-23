@@ -17,7 +17,6 @@ module.exports = (app) => {
 			isEmpty(place.author, "Campo Autor é obrigatório");
 			isEmpty(place.type, "Campo Type é obrigatório");
 		} catch (msg) {
-			console.log(msg);
 			// return res.send(msg);
 			return res.status(400).json({ code: 400, message: msg });
 		}
@@ -116,23 +115,24 @@ module.exports = (app) => {
 	const listByCity = async (req, res) => {
 		const places = await app.db.raw(
 			`
-        SELECT city 
-        FROM places 
-        WHERE 
-          LOWER(city) LIKE LOWER('%${req.params.city.toLowerCase()}%')
-        GROUP BY city
-      `
+		    SELECT city
+		    FROM places
+		    WHERE
+		      LOWER(city) LIKE LOWER('%${req.params.city.toLowerCase()}%')
+		    GROUP BY city
+		  `
 		);
-		const ids = places.rows.map((c) => c.id);
 
-		app
-			.db("places")
-			.whereIn("id", ids)
-			.orderBy("city", "asc")
-			.then((places) => {
-				res.json(places);
-			})
-			.catch((err) => res.status(500).send(err));
+		const cities = places.rows.map((c) => c.city);
+		res.send(cities);
+		// app
+		// 	.db("places")
+		// 	.whereIn("city", cities)
+		// 	.orderBy("city", "asc")
+		// 	.then((places) => {
+		// 		res.json(places);
+		// 	})
+		// 	.catch((err) => res.status(500).send(err));
 	};
 
 	const listByLocalType = async (req, res) => {
