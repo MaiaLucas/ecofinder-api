@@ -1,11 +1,34 @@
+const fs = require("fs");
+const AWS = require("aws-sdk");
 module.exports = (app) => {
 	const { isEmpty } = app.api.validation;
+	const bucketName =
+		"ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1";
+	const bucketRegion = "us-east-1";
+
+	AWS.config.update({
+		region: bucketRegion,
+	});
+
+	const s3 = new AWS.S3({
+		apiVersion: "2006-03-01",
+		params: { Bucket: bucketName },
+	});
+
+	var bucketParams = { Bucket: bucketName };
 
 	const save = (req, res) => {
 		const place = { ...req.body };
-		if (req.params.id) place.id = req.params.id;
 
-		console.log(place);
+		s3.get(bucketParams, function (err, data) {
+			if (err) {
+				console.log("Error", err);
+			} else if (data) {
+				console.log("Success", data);
+			}
+		});
+
+		if (req.params.id) place.id = req.params.id;
 		try {
 			isEmpty(place.title, "Campo Título é obrigatório");
 			isEmpty(place.state, "Campo Estado é obrigatório");
@@ -21,6 +44,27 @@ module.exports = (app) => {
 			return res.status(400).json({ code: 400, message: msg });
 		}
 
+		const requestImages = req.files;
+
+		const images = requestImages.map((image) => {
+			// const params = {
+			// 	Bucket: bucketName,
+			// 	Key: image.filename, // File name you want to save as in S3
+			// 	Body: image,
+			// };
+			// s3.upload(params, function (err, data) {
+			// 	if (err) {
+			// 		throw err;
+			// 	}
+			// 	console.log(`File uploaded successfully. ${data.Location}`);
+			// });
+			// return image.filename;
+		});
+		place.images_url = images.join(",");
+
+		// console.log(place);
+
+		return;
 		if (place.id) {
 			place.update_at = new Date(Date.now());
 
@@ -72,6 +116,16 @@ module.exports = (app) => {
 		app
 			.db("places")
 			.select("*")
+			.where({ id: req.params.id })
+			.first()
+			.then((places) => res.json(places))
+			.catch((err) => res.status(500).send(err));
+	};
+
+	const listImagesById = (req, res) => {
+		app
+			.db("places")
+			.select("images_url")
 			.where({ id: req.params.id })
 			.first()
 			.then((places) => res.json(places))
@@ -186,6 +240,7 @@ module.exports = (app) => {
 		listById,
 		listByLocal,
 		listByLocalType,
+		listImagesById,
 		remove,
 	};
 };

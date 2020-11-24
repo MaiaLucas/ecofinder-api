@@ -1,5 +1,5 @@
-const multer = require('multer')
-const multerConfig = require('./multer')
+const multer = require("multer");
+const multerConfig = require("./multer");
 
 module.exports = (app) => {
 	app.get("/health", app.api.health.work);
@@ -24,7 +24,11 @@ module.exports = (app) => {
 	// Locais
 	app
 		.route("/place")
-		.post(app.config.passport.authenticate(), app.api.places.save)
+		.post(
+			// app.config.passport.authenticate(),
+			multer(multerConfig).array("images"),
+			app.api.places.save
+		)
 		.get(app.api.places.listAll);
 
 	app.get("/city/:city", app.api.places.listByCity);
@@ -36,6 +40,8 @@ module.exports = (app) => {
 		.get(app.api.places.listById)
 		.put(app.config.passport.authenticate(), app.api.places.save)
 		.delete(app.config.passport.authenticate(), app.api.places.remove);
+
+	app.route("/images/:id").get(app.api.places.listImagesById);
 
 	app.get("/place/:id/list", app.api.places.listByType);
 
@@ -53,16 +59,19 @@ module.exports = (app) => {
 
 	// Tipos
 	app.route("/type").get(app.api.types.listAll);
-  app.route("/type/:id").get(app.api.types.listById);
-  
-  // upload images
-  app.post("/upload", multer(multerConfig).single('file'), app.api.images.save);
+	app.route("/type/:id").get(app.api.types.listById);
 
-  // app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
-    
-  //   console.log(req.file)
-  
-  //   return res.json({ massage: "Upload image" });
-  // });
+	// upload images
+	// app.post(
+	// 	"/upload",
+	// 	multer(multerConfig).array("images"),
+	// 	app.api.images.save
+	// );
+
+	// app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
+
+	//   console.log(req.file)
+
+	//   return res.json({ massage: "Upload image" });
+	// });
 };
-
