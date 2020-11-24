@@ -56,11 +56,13 @@ module.exports = (app) => {
   app.route("/type/:id").get(app.api.types.listById);
   
   // upload images
-  app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
+  app.post("/upload", multer(multerConfig).single('file'), app.api.images.save);
+
+  // app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
     
-    console.log(req.file)
+  //   console.log(req.file)
   
-    return res.json({ massage: "Upload image" });
-  });
+  //   return res.json({ massage: "Upload image" });
+  // });
 };
 
