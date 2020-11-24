@@ -6,27 +6,19 @@ module.exports = (app) => {
 		"ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1";
 	const bucketRegion = "us-east-1";
 
-	AWS.config.update({
-		region: bucketRegion,
-	});
+	// AWS.config.update({
+	// 	region: bucketRegion,
+	// });
 
-	const s3 = new AWS.S3({
-		apiVersion: "2006-03-01",
-		params: { Bucket: bucketName },
-	});
+	// const s3 = new AWS.S3({
+	// 	apiVersion: "2006-03-01",
+	// 	params: { Bucket: bucketName },
+	// });
 
-	var bucketParams = { Bucket: bucketName };
+	// var bucketParams = { Bucket: bucketName };
 
 	const save = (req, res) => {
 		const place = { ...req.body };
-
-		s3.get(bucketParams, function (err, data) {
-			if (err) {
-				console.log("Error", err);
-			} else if (data) {
-				console.log("Success", data);
-			}
-		});
 
 		if (req.params.id) place.id = req.params.id;
 		try {
@@ -47,24 +39,13 @@ module.exports = (app) => {
 		const requestImages = req.files;
 
 		const images = requestImages.map((image) => {
-			// const params = {
-			// 	Bucket: bucketName,
-			// 	Key: image.filename, // File name you want to save as in S3
-			// 	Body: image,
-			// };
-			// s3.upload(params, function (err, data) {
-			// 	if (err) {
-			// 		throw err;
-			// 	}
-			// 	console.log(`File uploaded successfully. ${data.Location}`);
-			// });
-			// return image.filename;
+			return image.location;
 		});
+
 		place.images_url = images.join(",");
 
 		// console.log(place);
 
-		return;
 		if (place.id) {
 			place.update_at = new Date(Date.now());
 
