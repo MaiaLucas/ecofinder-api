@@ -7,11 +7,7 @@ const app = express();
 
 const bucketName = "ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1";
 AWS.config.getCredentials(function (err) {
-	if (err) console.log(err.stack);
-	// credentials not loaded
-	else {
-		console.log("Access key:", AWS.config.credentials.secretAccessKey);
-	}
+	console.log("has credentials");
 });
 
 app.db = db; //knex
