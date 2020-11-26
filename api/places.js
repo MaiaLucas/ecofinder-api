@@ -44,8 +44,6 @@ module.exports = (app) => {
 
 		place.images_url = images.join(",");
 
-		// console.log(place);
-
 		if (place.id) {
 			place.update_at = new Date(Date.now());
 
