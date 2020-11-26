@@ -48,7 +48,7 @@ module.exports = (app) => {
 			}
 		} catch (e) {
 			//problema com o token
-			return res.status(400).send(false);
+			return false; //res.status(400).json(false);
 		}
 	};
 
