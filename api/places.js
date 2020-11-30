@@ -42,7 +42,7 @@ module.exports = (app) => {
 			return image.location;
 		});
 
-		place.images_url = images.join(",");
+		place.images_url = req.files.length ? images.join(",") : place.images;
 
 		if (place.id) {
 			place.update_at = new Date(Date.now());
