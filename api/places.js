@@ -92,12 +92,16 @@ module.exports = (app) => {
 	};
 
 	const listById = (req, res) => {
+		console.log("object");
 		app
 			.db("places")
 			.select("*")
 			.where({ id: req.params.id })
 			.first()
-			.then((places) => res.json(places))
+			.then((places) => {
+				console.log(places);
+				res.json(places);
+			})
 			.catch((err) => res.status(500).send(err));
 	};
 
@@ -199,13 +203,14 @@ module.exports = (app) => {
 				.where({ id: req.params.id })
 				.del();
 
-			try {
-				existsOrError(rowsDeleted, "Resultado não foi encontrado.");
-			} catch (msg) {
-				return res.status(400).send(msg);
-			}
+			console.log(rowsDeleted);
+			// try {
+			// 	notExistsOrError(rowsDeleted, "Resultado não foi encontrado.");
+			// } catch (msg) {
+			// 	return res.status(400).send(msg);
+			// }
 
-			res.status(204).send();
+			rowsDeleted && res.status(204).send();
 		} catch (msg) {
 			res.status(500).send(msg);
 		}

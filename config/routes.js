@@ -38,8 +38,12 @@ module.exports = (app) => {
 	app
 		.route("/place/:id")
 		.get(app.api.places.listById)
-		.put(app.config.passport.authenticate(), app.api.places.save)
-		.delete(app.config.passport.authenticate(), app.api.places.remove);
+		.put(
+			// app.config.passport.authenticate(),
+			multer(multerConfig).array("images"),
+			app.api.places.save
+		)
+		.delete(app.api.places.remove);
 
 	app.route("/images/:id").get(app.api.places.listImagesById);
 
