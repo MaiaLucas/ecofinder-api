@@ -30,7 +30,8 @@
     "passport-jwt": "^4.0.0",
     "pg": "^7.4.3",
     "pm2": "^4.4.1",
-    "uuidv4": "^6.2.3"
+    "uuidv4": "^6.2.3",
+    "mquery": ">=3.2.3"
   },
   "devDependencies": {
     "eslint": "^7.5.0",
