@@ -1,7 +1,9 @@
 exports.up = function (knex) {
   return knex.schema.createTable("users", (table) => {
     table.string("id").primary();
-    table.string("username").notNull();
+    table.string("first_name");
+    table.string("last_name");
+    table.string("type");
     table.string("email").notNull().unique();
     table.string("password").notNull();
     table.dateTime("create_at").notNull();
