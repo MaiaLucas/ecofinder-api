@@ -4,6 +4,7 @@ exports.up = function (knex) {
     table.string("title").notNull();
     table.string("description", 1000);
     table.string("images_url", 1000);
+    table.float("rating");
     table.string("city").notNull();
     table.float("latitude").notNull();
     table.float("longitude").notNull();
