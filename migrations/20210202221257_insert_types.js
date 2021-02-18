@@ -10,11 +10,6 @@ exports.up = function (knex) {
       create_at: new Date(),
       update_at: new Date(),
     },
-    {
-      name: "Lojas",
-      create_at: new Date(),
-      update_at: new Date(),
-    },
   ]);
 };
 
