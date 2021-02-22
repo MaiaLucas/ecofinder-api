@@ -17,7 +17,7 @@ module.exports = (app) => {
   const save = async (req, res) => {
     const user = { ...req.body };
     if (req.params.id) user.id = req.params.id;
-
+    console.log(user);
     try {
       // existsOrError(user.username, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
@@ -72,7 +72,9 @@ module.exports = (app) => {
         .then((_) =>
           res.status(200).json({ message: "Cadastrado com sucesso" })
         )
-        .catch((err) => res.status(500).json({ message: err }));
+        .catch((err) =>
+          res.status(500).json({ message: "Internal Server Error" })
+        );
     }
   };
 
@@ -81,7 +83,9 @@ module.exports = (app) => {
       .db("users")
       .select("id", "username", "email")
       .then((users) => res.json(users))
-      .catch((err) => res.status(500).send(err));
+      .catch((err) =>
+        res.status(500).send({ message: "Internal Server Error" })
+      );
   };
 
   const listById = (req, res) => {
@@ -91,7 +95,9 @@ module.exports = (app) => {
       .select("*")
       .where({ id: req.params.id })
       .then((users) => res.json(users))
-      .catch((err) => res.status(500).send(err));
+      .catch((err) =>
+        res.status(500).send({ message: "Internal Server Error" })
+      );
   };
 
   return { save, listAll, listById };

@@ -3,6 +3,9 @@ const AWS = require("aws-sdk");
 module.exports = (app) => {
   const { isEmpty } = app.api.validation;
 
+  /**
+   * função responsável por cadastrar/editar um local
+   */
   const save = (req, res) => {
     const place = { ...req.body };
 
@@ -12,14 +15,14 @@ module.exports = (app) => {
       isEmpty(place.state, "Campo Estado é obrigatório");
       isEmpty(place.city, "Campo Cidade é obrigatório");
       isEmpty(place.phone, "Campo Telefone é obrigatório");
+      isEmpty(place.address, "Campo Endereço é obrigatório");
       isEmpty(place.hr_init, "Campo Hora Inicial é obrigatório");
       isEmpty(place.hr_final, "Campo Hora Final é obrigatório");
       isEmpty(place.opening_days, "Campo Dias de Funcionamento é obrigatório");
       isEmpty(place.author, "Campo Autor é obrigatório");
       isEmpty(place.type, "Campo Type é obrigatório");
     } catch (msg) {
-      // return res.send(msg);
-      return res.status(400).json({ code: 400, message: msg });
+      return res.status(400).json({ message: msg });
     }
 
     const requestImages = req.files;
@@ -37,11 +40,8 @@ module.exports = (app) => {
         .db("places")
         .update(place)
         .where({ id: place.id })
-        // .whereNull("deletedAt")
         .then((_) =>
-          res
-            .status(200)
-            .json({ code: 200, message: "Local alterado com sucesso!" })
+          res.status(200).json({ message: "Local alterado com sucesso!" })
         )
         .catch((err) => res.status(500).send(err));
     } else {
@@ -52,11 +52,9 @@ module.exports = (app) => {
         .db("places")
         .insert(place)
         .then((_) =>
-          res
-            .status(200)
-            .json({ code: 200, message: "Local cadastrado com sucesso!" })
+          res.status(200).json({ message: "Local cadastrado com sucesso!" })
         )
-        .catch((err) => res.status(500).send(err));
+        .catch((err) => res.status(500).send({ message: err }));
     }
   };
 
@@ -66,6 +64,18 @@ module.exports = (app) => {
       .select("*")
       .then((places) => res.json(places))
       .catch((err) => res.status(500).send(err));
+  };
+
+  /**
+   *  Listagem por classificação
+   */
+  const listByRating = (req, res) => {
+    app
+      .db("places")
+      .select("title", "rating", "images_url as mainImage")
+      .orderBy("rating", "desc")
+      .then((places) => res.json(places))
+      .catch((err) => res.status(500).send({ message: err }));
   };
 
   const listByType = (req, res) => {
@@ -211,6 +221,7 @@ module.exports = (app) => {
     listByLocal,
     listByLocalType,
     listImagesById,
+    listByRating,
     remove,
   };
 };
