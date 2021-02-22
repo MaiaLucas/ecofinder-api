@@ -2,7 +2,6 @@ exports.up = function (knex) {
   return knex.schema.createTable("products", (table) => {
     table.increments("id").primary();
     table.string("title").notNull();
-    table.string("description", 1000);
     table.string("images_url", 1000);
     table.float("rating");
     table.string("instagram_account", 1000);
@@ -11,7 +10,7 @@ exports.up = function (knex) {
     table.dateTime("update_at").notNull();
 
     // chaves estrangeiras
-    table.string("author").references("id").inTable("users").notNull();
+    table.string("author").references("id").inTable("users");
   });
 };
 
