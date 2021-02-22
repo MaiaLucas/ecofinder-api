@@ -2,80 +2,50 @@ const multer = require("multer");
 const multerConfig = require("./multer");
 
 module.exports = (app) => {
-	app.get("/health", app.api.health.work);
+  app.get("/health", app.api.health.work);
 
-	app.post("/signup", app.api.user.save);
-	app.post("/signin", app.api.auth.signin);
-	app.post("/validateToken", app.api.auth.validateToken);
+  app.post("/signup", app.api.user.save);
+  app.post("/signin", app.api.auth.signin);
+  app.post("/validateToken", app.api.auth.validateToken);
 
-	// Usuários
-	app
-		.route("/user")
-		// .all(app.config.passport.authenticate())
-		.post(app.api.user.save)
-		.get(app.api.user.listAll);
+  // Usuários
+  app
+    .route("/user")
+    // .all(app.config.passport.authenticate())
+    .post(app.api.user.save)
+    .get(app.api.user.listAll);
 
-	app
-		.route("/user/:id")
-		.all(app.config.passport.authenticate())
-		.put(app.api.user.save)
-		.get(app.api.user.listById);
+  app
+    .route("/user/:id")
+    .all(app.config.passport.authenticate())
+    .put(app.api.user.save)
+    .get(app.api.user.listById);
 
-	// Locais
-	app
-		.route("/place")
-		.post(
-			// app.config.passport.authenticate(),
-			multer(multerConfig).array("images"),
-			app.api.places.save
-		)
-		.get(app.api.places.listAll);
+  // Locais
+  app
+    .route("/place")
+    .post(multer(multerConfig).array("images"), app.api.places.save)
+    .get(app.api.places.listAll);
 
-	app.get("/city/:city", app.api.places.listByCity);
-	app.get("/place/list/:place", app.api.places.listByLocal);
-	app.get("/place/:id/list/:place", app.api.places.listByLocalType);
+  app.get("/city/:city", app.api.places.listByCity);
 
-	app
-		.route("/place/:id")
-		.get(app.api.places.listById)
-		.put(
-			// app.config.passport.authenticate(),
-			multer(multerConfig).array("images"),
-			app.api.places.save
-		)
-		.delete(app.api.places.remove);
+  app.get("/place/rating", app.api.places.listByRating);
 
-	app.route("/images/:id").get(app.api.places.listImagesById);
+  app
+    .route("/place/:id")
+    .get(app.api.places.listById)
+    .put(
+      // app.config.passport.authenticate(),
+      multer(multerConfig).array("images"),
+      app.api.places.save
+    )
+    .delete(app.api.places.remove);
 
-	app.get("/place/:id/list", app.api.places.listByType);
+  app.get("/place/:id/list", app.api.places.listByType);
 
-	// Informativos
-	app
-		.route("/info")
-		.post(app.config.passport.authenticate(), app.api.info.save)
-		.get(app.api.info.listAll);
+  app.route("/images/:id").get(app.api.places.listImagesById);
 
-	app
-		.route("/info/:id")
-		.put(app.config.passport.authenticate(), app.api.info.save)
-		.get(app.api.info.listAll)
-		.delete(app.config.passport.authenticate(), app.api.info.remove);
-
-	// Tipos
-	app.route("/type").get(app.api.types.listAll);
-	app.route("/type/:id").get(app.api.types.listById);
-
-	// upload images
-	// app.post(
-	// 	"/upload",
-	// 	multer(multerConfig).array("images"),
-	// 	app.api.images.save
-	// );
-
-	// app.post("/upload", multer(multerConfig).single('file'), (req, res) => {
-
-	//   console.log(req.file)
-
-	//   return res.json({ massage: "Upload image" });
-	// });
+  // Tipos
+  app.route("/type").get(app.api.types.listAll);
+  app.route("/type/:id").get(app.api.types.listById);
 };
