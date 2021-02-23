@@ -8,44 +8,14 @@ module.exports = (app) => {
   app.post("/signin", app.api.auth.signin);
   app.post("/validateToken", app.api.auth.validateToken);
 
-  // Usuários
-  app
-    .route("/user")
-    // .all(app.config.passport.authenticate())
-    .post(app.api.user.save)
-    .get(app.api.user.listAll);
-
-  app
-    .route("/user/:id")
-    .all(app.config.passport.authenticate())
-    .put(app.api.user.save)
-    .get(app.api.user.listById);
-
-  // Locais
-  app
-    .route("/place")
-    .post(multer(multerConfig).array("images"), app.api.places.save)
-    .get(app.api.places.listAll);
-
-  app.get("/city/:city", app.api.places.listByCity);
-
-  app.get("/place/rating", app.api.places.listByRating);
-
-  app
-    .route("/place/:id")
-    .get(app.api.places.listById)
-    .put(
-      // app.config.passport.authenticate(),
-      multer(multerConfig).array("images"),
-      app.api.places.save
-    )
-    .delete(app.api.places.remove);
-
-  app.get("/place/:id/list", app.api.places.listByType);
-
-  app.route("/images/:id").get(app.api.places.listImagesById);
-
-  // Tipos
-  app.route("/type").get(app.api.types.listAll);
-  app.route("/type/:id").get(app.api.types.listById);
+  // Rotas para aba de locais
+  /**
+   * exemplos:
+   * /dashboard?page=1
+   * /search_place?city=fortaleza&type=1
+   * /autocomplete?city=fortaleza
+   */
+  app.get("/dashboard", app.api.places.list);
+  app.get("/search_place", app.api.places.listByCityType);
+  app.get("/autocomplete", app.api.places.autocompleteCities);
 };
