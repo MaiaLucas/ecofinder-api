@@ -21,12 +21,12 @@ module.exports = (app) => {
     try {
       // existsOrError(user.username, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
-      minMaxLength(
-        user.password,
-        8,
-        15,
-        "Senha deve conter entre 8 e 15 caracteres, contando com Letras maiúsculas, minúsculas e caracteres especiais"
-      );
+      // minMaxLength(
+      //   user.password,
+      //   8,
+      //   15,
+      //   "Senha deve conter entre 8 e 15 caracteres, contando com Letras maiúsculas, minúsculas e caracteres especiais"
+      // );
       existsOrError(user.password, "Senha não informada");
 
       if (!user.id) {
