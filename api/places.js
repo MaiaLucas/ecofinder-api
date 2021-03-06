@@ -107,14 +107,25 @@ module.exports = (app) => {
    * @param {*} page responsável pelo limite da listagem
    */
   function list(req, res) {
-    const page = !req.query.page ? 4 : req.query.page;
+    const page = !req.query.page ? 7 : req.query.page;
     app
       .db("places")
-      .select("id", "title", "rating", "images_url")
+      .select("id", "title", "rating", "images_url as imagesUrl", "type")
       .from("places")
       .orderBy("rating", "desc")
       .limit(page)
-      .then((place) => res.json(place))
+      .then((place) => {
+        const top2 = [place[1], place[2]];
+        const highlight = place[0];
+        place.splice(0, 3);
+        const experience = place.filter((el) => el.type === 2);
+
+        res.json({
+          highlight,
+          top2,
+          experience,
+        });
+      })
       .catch((err) =>
         res.status(500).send({ message: "Internal Server Error" })
       );
