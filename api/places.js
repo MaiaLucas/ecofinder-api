@@ -110,7 +110,7 @@ module.exports = (app) => {
     const page = !req.query.page ? 4 : req.query.page;
     app
       .db("places")
-      .select("title", "rating")
+      .select("id", "title", "rating", "images_url")
       .from("places")
       .orderBy("rating", "desc")
       .limit(page)
