@@ -1,45 +1,79 @@
-const fs = require("fs");
-const AWS = require("aws-sdk");
+import * as Yup from "yup";
 module.exports = (app) => {
   const { isEmpty } = app.api.validation;
 
   /**
    * função responsável por cadastrar um local
    */
-  function create(req, res) {
-    const place = { ...req.body };
-
-    try {
-      isEmpty(title, "Campo Título é obrigatório");
-      isEmpty(city, "Campo Cidade é obrigatório");
-      isEmpty(address, "Campo Endereço é obrigatório");
-      isEmpty(phone, "Campo Telefone é obrigatório");
-      isEmpty(hr_init, "Campo Hora Inicial é obrigatório");
-      isEmpty(hr_final, "Campo Hora Final é obrigatório");
-    } catch (msg) {
-      return res.status(400).json({ message: msg });
-    }
+  async function create(req, res) {
+    const {
+      title,
+      type,
+      city,
+      address,
+      phone,
+      hr_init,
+      hr_final,
+      open_on_weekend,
+      description,
+    } = req.body;
 
     const requestImages = req.files;
-
     const images = requestImages.map((image) => {
-      return image.location;
+      return {
+        path: image.location,
+      };
     });
 
-    place.images_url = req.files.length ? images.join(",") : place.images;
+    const data = {
+      title,
+      type,
+      city,
+      address,
+      phone,
+      hr_init,
+      hr_final,
+      open_on_weekend: open_on_weekend === "true",
+      description,
+      images_url: { images },
+      create_at: new Date(),
+      update_at: new Date(),
+    };
 
-    place.create_at = new Date(Date.now());
-    place.update_at = new Date(Date.now());
+    const schema = Yup.object().shape({
+      title: Yup.string().required("Campo Titulo é obrigatório"),
+      city: Yup.string().required("Campo Cidade é obrigatório"),
+      address: Yup.string().required("Campo Endereço é obrigatório"),
+      phone: Yup.string().required("Campo Telefone é obrigatório"),
+      hr_init: Yup.string().required("Campo Hora Inicial é obrigatório"),
+      hr_final: Yup.string().required("Campo Hora Final é obrigatório"),
+      open_on_weekend: Yup.boolean(),
+      description: Yup.string(),
+      images_url: Yup.object().shape({
+        images: Yup.array(
+          Yup.object().shape({
+            path: Yup.string().required(),
+          })
+        ),
+      }),
+    });
+
+    try {
+      await schema.validate(data, { abortEarly: false });
+    } catch (error) {
+      const { errors } = error;
+      return res.status(400).json({ message: errors });
+    }
 
     app
       .db("places")
-      .insert(place)
+      .insert(data)
       .then((_) =>
         res.status(200).json({ message: "Local cadastrado com sucesso!" })
       )
-      .catch((err) =>
-        res.status(500).send({ message: "Internal Server Error" })
-      );
+      .catch((err) => {
+        res.status(500).send({ message: "Internal Server Error" });
+      });
   }
 
   /**
@@ -126,9 +160,41 @@ module.exports = (app) => {
           experience,
         });
       })
-      .catch((err) =>
-        res.status(500).send({ message: "Internal Server Error" })
-      );
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ message: "Internal Server Error" });
+      });
+  }
+
+  /**
+   * exibe os dados de um local especifico a partir do id
+   * @param {Integer} id id do local
+   */
+  async function placeDetail(req, res) {
+    const { id } = req.params;
+    app
+      .db("places")
+      .select(
+        "title",
+        "rating",
+        "description",
+        "address",
+        "city",
+        "phone",
+        "hr_init",
+        "hr_final",
+        "open_on_weekend",
+        "images_url as imagesUrl"
+      )
+      .where("id", id)
+      .limit(1)
+      .then((place) => {
+        res.json(...place);
+        // return place;
+      })
+      .catch((err) => {
+        res.status(500).send({ message: "Internal Server Error" });
+      });
   }
 
   /**
@@ -163,7 +229,7 @@ module.exports = (app) => {
   /**
    * função responsável por listar as cidades ao pesquisar
    */
-  async function autocompleteCities(req, res) {
+  async function cities(req, res) {
     const city = !req.query.city ? "" : req.query.city.toLowerCase();
     const places = await app.db.raw(
       `
@@ -171,7 +237,7 @@ module.exports = (app) => {
         FROM places
         WHERE 1 = 1
         ${city ? `AND (LOWER(city) LIKE LOWER('%${city}%'))` : ""}
-        LIMIT 3
+        LIMIT 5
       `
     );
     const ids = places.rows.map((c) => c.id);
@@ -194,6 +260,7 @@ module.exports = (app) => {
     remove,
     list,
     listByCityType,
-    autocompleteCities,
+    cities,
+    placeDetail,
   };
 };
