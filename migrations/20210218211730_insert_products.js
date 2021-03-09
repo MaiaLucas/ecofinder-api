@@ -2,7 +2,7 @@ exports.up = function (knex) {
   return knex("products").insert([
     {
       title: "Escova de bambu",
-      images_url: "",
+      images_url: {},
       instagram_account: "@minhaloja",
       rating: 4.87,
       create_at: new Date(),
@@ -10,7 +10,7 @@ exports.up = function (knex) {
     },
     {
       title: "Ecogarrafinha",
-      images_url: "",
+      images_url: {},
       instagram_account: "@minhaloja",
       rating: 4.7,
       create_at: new Date(),
@@ -18,7 +18,7 @@ exports.up = function (knex) {
     },
     {
       title: "Ecobag",
-      images_url: "",
+      images_url: {},
       instagram_account: "@minhaloja",
       rating: 5.0,
       create_at: new Date(),
@@ -26,7 +26,7 @@ exports.up = function (knex) {
     },
     {
       title: "Canudo de bambu",
-      images_url: "",
+      images_url: {},
       instagram_account: "@minhaloja",
       rating: 4.5,
       create_at: new Date(),

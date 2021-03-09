@@ -3,7 +3,7 @@ exports.up = function (knex) {
     {
       title: "Ecoponto",
       description: "leve seu lixo",
-      images_url: "",
+      images_url: {},
       city: "Fortaleza",
       rating: 4.87,
       address: "Rua dos bobos, 0",
@@ -16,7 +16,7 @@ exports.up = function (knex) {
     {
       title: "Ecopoint",
       description: "Passeio bacana",
-      images_url: "",
+      images_url: {},
       city: "Fortaleza",
       rating: 4.57,
       address: "Rua dos bobos, 0",
@@ -29,7 +29,7 @@ exports.up = function (knex) {
     {
       title: "Passeio no Parque do Cocó",
       description: "muito sustentável",
-      images_url: "",
+      images_url: {},
       city: "Fortaleza",
       rating: 4.92,
       address: "Rua dos bobos, 0",

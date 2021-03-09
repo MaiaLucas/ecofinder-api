@@ -3,7 +3,7 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.string("title").notNull();
     table.string("description", 1000);
-    table.string("images_url", 1000);
+    table.json("images_url");
     table.float("rating");
     table.string("city").notNull();
     table.string("address");

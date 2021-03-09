@@ -3,7 +3,7 @@ exports.up = function (knex) {
     {
       title: "Ecoparque",
       description: "leve seu lixo",
-      images_url: "",
+      images_url: {},
       city: "Fortaleza",
       rating: 4.87,
       address: "Rua dos bobos, 0",
@@ -16,7 +16,7 @@ exports.up = function (knex) {
     {
       title: "Ecopoint",
       description: "Passeio bacana",
-      images_url: "",
+      images_url: {},
       city: "Fortaleza",
       rating: 4.57,
       address: "Rua dos bobos, 0",
@@ -29,8 +29,18 @@ exports.up = function (knex) {
     {
       title: "Ecoponto Fortaleza",
       description: "muito bonito",
-      images_url:
-        "https://www.fortaleza.ce.gov.br/images/Ecopontos/Ecoponto-L48A0413.JPG",
+      images_url: {
+        images: [
+          {
+            path:
+              "https://ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1.s3.amazonaws.com/1eb587a9a22d07989633d0cb427a4c34-sustainability.jpg",
+          },
+          {
+            path:
+              "https://ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1.s3.amazonaws.com/11578d96581ef03dbfc58466fb6cb96f-sustainably.png",
+          },
+        ],
+      },
       city: "Fortaleza",
       rating: 5.0,
       address: "Rua dos bobos, 0",
@@ -43,8 +53,18 @@ exports.up = function (knex) {
     {
       title: "Posto de Coleta São José",
       description: "Todo tipo de lixo",
-      images_url:
-        "https://www.fortaleza.ce.gov.br/images/Ecopontos/Ecoponto-L48A0413.JPG",
+      images_url: {
+        images: [
+          {
+            path:
+              "https://ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1.s3.amazonaws.com/1eb587a9a22d07989633d0cb427a4c34-sustainability.jpg",
+          },
+          {
+            path:
+              "https://ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1.s3.amazonaws.com/11578d96581ef03dbfc58466fb6cb96f-sustainably.png",
+          },
+        ],
+      },
       city: "Fortaleza",
       rating: 4.99,
       address: "Rua dos bobos, 0",
