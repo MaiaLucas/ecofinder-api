@@ -12,6 +12,7 @@ module.exports = (app) => {
       city,
       address,
       phone,
+      rating,
       hr_init,
       hr_final,
       open_on_weekend,
@@ -30,6 +31,7 @@ module.exports = (app) => {
       type,
       city,
       address,
+      rating: rating || 5.0,
       phone,
       hr_init,
       hr_final,
@@ -124,6 +126,7 @@ module.exports = (app) => {
    * função responsável por deletar um local
    */
   async function remove(req, res) {
+    console.log(req.params);
     try {
       const rowsDeleted = await app
         .db("places")
