@@ -32,4 +32,7 @@ module.exports = (app) => {
 
   // Exibe os detalhes de um ponto de coleta ou experiencia
   app.get("/place/detail/:id", app.api.places.placeDetail);
+
+  // Remove um ponto de coleta ou experiencia
+  app.post("/place/remove/:id", app.api.places.remove);
 };
