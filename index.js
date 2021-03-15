@@ -12,7 +12,7 @@ AWS.config.getCredentials(function (err) {
 
 app.db = db; //knex
 
-const port = process.env.PORT || 8888;
+const port = process.env.PORT || 4040;
 consign()
   .include("./config/passport.js")
   .then("./config/middlewares.js")
@@ -22,7 +22,7 @@ consign()
   .into(app);
 
 app.get("/", (req, res) => {
-  res.send("<h1>Master working</h1>");
+  res.send(`<h1>Master working ${process.env.DATABASE_URL}</h1>`);
 });
 
 app.use(express.json());
