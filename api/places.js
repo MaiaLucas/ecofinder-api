@@ -221,6 +221,7 @@ module.exports = (app) => {
 
     app
       .db("places")
+      .select("id", "title", "rating", "images_url")
       .whereIn("id", ids)
       .orderBy("rating", "desc")
       .then((places) => res.json(places))
