@@ -35,4 +35,25 @@ module.exports = (app) => {
 
   // Remove um ponto de coleta ou experiencia
   app.post("/place/remove/:id", app.api.places.remove);
+
+  // Rotas para aba de produtos
+  app.post(
+    "/product",
+    multer(multerConfig).array("images"),
+    app.api.store.create
+  );
+
+  app.delete("/product/:id", app.api.store.remove);
+
+  app.put(
+    "/product/:id",
+    multer(multerConfig).array("images"),
+    app.api.store.edit
+  );
+
+  app.get("/product", app.api.store.list);
+
+  app.get("/product/search", app.api.store.search);
+
+  app.get("/product/:id", app.api.store.detail);
 };
