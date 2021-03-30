@@ -4,6 +4,7 @@ exports.up = function (knex) {
     table.string("title").notNull();
     table.string("images_url", 1000);
     table.float("rating");
+    table.float("price");
     table.string("instagram_account", 1000);
     table.string("facebook_link", 1000);
     table.dateTime("create_at").notNull();
