@@ -164,7 +164,6 @@ module.exports = (app) => {
         });
       })
       .catch((err) => {
-        console.log(err);
         res.status(500).send({ message: "Internal Server Error" });
       });
   }
@@ -207,27 +206,29 @@ module.exports = (app) => {
    */
   async function listByCityType(req, res) {
     const type = !req.query.type ? "" : req.query.type;
-    const city = !req.query.city ? "" : req.query.city.toLowerCase();
-    const places = await app.db.raw(
-      `
-        SELECT id, title, rating
-        FROM places
-        WHERE 1 = 1
-        ${type ? `AND type = ${type}` : ""}
-        ${city ? `AND (LOWER(city) LIKE LOWER('%${city}%'))` : ""}
-      `
-    );
-    const ids = places.rows.map((c) => c.id);
+    const city = !req.query.city ? "" : req.query.city;
 
     app
       .db("places")
-      .select("id", "title", "rating", "images_url")
-      .whereIn("id", ids)
+      .select("id", "title", "rating", "images_url", "type", "city")
+      .andWhere(app.db.raw(`${type ? `type = ${type}` : ""}`))
+      .andWhere(function () {
+        this.where(
+          app.db.raw(`${city ? `(LOWER(city) LIKE LOWER('%${city}%'))` : ""}`)
+        ).orWhere(
+          app.db.raw(`${city ? `(LOWER(title) LIKE LOWER('%${city}%'))` : ""}`)
+        );
+      })
+      .from("places")
       .orderBy("rating", "desc")
-      .then((places) => res.json(places))
-      .catch((err) =>
-        res.status(500).send({ message: "Internal Server Error" })
-      );
+      .limit(6)
+      .then((places) => {
+        res.json(places);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ message: "Internal Server Error" });
+      });
   }
 
   /**
