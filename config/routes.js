@@ -4,9 +4,18 @@ const multerConfig = require("./multer");
 module.exports = (app) => {
   app.get("/health", app.api.health.work);
 
-  app.post("/signup", app.api.user.save);
   app.post("/signin", app.api.auth.signin);
+
   app.post("/validateToken", app.api.auth.validateToken);
+
+  // Rotas de usuário
+  app.post("/signup", app.api.user.create);
+
+  app.get("/user", app.api.user.list);
+
+  app.get("/user/:id", app.api.user.findUser);
+
+  app.put("/user/:id", multer(multerConfig).array("image"), app.api.user.edit);
 
   // Rotas para aba de locais
   /**

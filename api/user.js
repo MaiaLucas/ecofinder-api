@@ -1,104 +1,115 @@
 const bcrypt = require("bcrypt-nodejs");
-const { uuid } = require("uuidv4");
+import { v4 as uuid } from "uuid";
+import * as Yup from "yup";
 
 module.exports = (app) => {
-  const {
-    existsOrError,
-    notExistsOrError,
-    equalsOrError,
-    minMaxLength,
-  } = app.api.validation;
-
   const encryptPassword = (password) => {
     const salt = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(password, salt);
   };
 
-  const save = async (req, res) => {
-    const user = { ...req.body };
-    if (req.params.id) user.id = req.params.id;
-    console.log(user);
+  async function create(req, res) {
+    const { email, password, confirm_password, full_name } = req.body;
+
+    const data = {
+      id: uuid(),
+      email,
+      password,
+      confirm_password,
+      full_name,
+      create_at: new Date(),
+      update_at: new Date(),
+    };
+
+    const schema = Yup.object().shape({
+      email: Yup.string().email().required("Campo E-mail é obrigatório"),
+      password: Yup.string().required("Campo Senha é obrigatório"),
+      confirm_password: Yup.string().oneOf(
+        [Yup.ref("password"), null],
+        "Senhas não conferem"
+      ),
+      full_name: Yup.string(),
+    });
+
     try {
-      // existsOrError(user.username, "Nome não informado");
-      existsOrError(user.email, "E-mail não informado");
-      // minMaxLength(
-      //   user.password,
-      //   8,
-      //   15,
-      //   "Senha deve conter entre 8 e 15 caracteres, contando com Letras maiúsculas, minúsculas e caracteres especiais"
-      // );
-      existsOrError(user.password, "Senha não informada");
-
-      if (!user.id) {
-        existsOrError(user.confirmPassword, "Confirmação de Senha inválida");
-        equalsOrError(
-          user.password,
-          user.confirmPassword,
-          "Senhas não conferem"
-        );
-
-        const userFromDB = await app
-          .db("users")
-          .where({ email: user.email })
-          .first();
-        notExistsOrError(userFromDB, "Usuário já cadastrado");
-      }
-    } catch (msg) {
-      return res.status(400).json({ message: msg });
+      await schema.validate(data, { abortEarly: false });
+    } catch (error) {
+      return res.status(400).json({ message: error });
     }
-    user.password = encryptPassword(user.password);
 
-    delete user.confirmPassword;
-    if (user.id) {
-      user.update_at = new Date(Date.now());
-      app
-        .db("users")
-        .update(user)
-        .where({ id: user.id })
-        // .whereNull("deletedAt")
-        .then((_) => {
-          res.status(200).json({ message: "Alterado com sucesso" });
-        })
-        .catch((err) => {
-          res.status(500).json(err);
-        });
-    } else {
-      user.create_at = new Date(Date.now());
-      user.update_at = new Date(Date.now());
-      user.id = uuid();
-      app
-        .db("users")
-        .insert(user)
-        .then((_) =>
-          res.status(200).json({ message: "Cadastrado com sucesso" })
-        )
-        .catch((err) =>
-          res.status(500).json({ message: "Internal Server Error" })
-        );
-    }
-  };
-
-  const listAll = (req, res) => {
+    delete data.confirm_password;
+    data.password = encryptPassword(data.password);
     app
       .db("users")
-      .select("id", "username", "email")
-      .then((users) => res.json(users))
+      .insert(data)
+      .then((_) => res.status(204).send())
       .catch((err) =>
         res.status(500).send({ message: "Internal Server Error" })
       );
-  };
+  }
 
-  const listById = (req, res) => {
+  async function edit(req, res) {
+    if (!req.params.id) res.status(500).send();
+    const { email, full_name } = req.body;
+
+    const requestImage = req.files;
+
+    const data = {
+      id: uuid(),
+      email,
+      full_name,
+      create_at: new Date(),
+      update_at: new Date(),
+      avatar: requestImage[0]["location"],
+    };
+
+    const schema = Yup.object().shape({
+      email: Yup.string().email(),
+      full_name: Yup.string(),
+    });
+
+    try {
+      await schema.validate(data, { abortEarly: false });
+    } catch (error) {
+      return res.status(400).json({ message: error });
+    }
+
+    delete data.confirm_password;
     app
       .db("users")
-      // .select("id", "username", "email")
-      .select("*")
+      .update(data)
       .where({ id: req.params.id })
-      .then((users) => res.json(users))
+      .then((_) => res.status(204).send())
       .catch((err) =>
         res.status(500).send({ message: "Internal Server Error" })
       );
-  };
 
-  return { save, listAll, listById };
+    console.log(data);
+  }
+
+  function list(req, res) {
+    app
+      .db("users")
+      // .select("id", "full_name", "email", "avatar")
+      .select("*")
+      .then((users) => res.json(users))
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ message: "Internal Server Error" });
+      });
+  }
+
+  function findUser(req, res) {
+    app
+      .db("users")
+      // .select("*")
+      .select("full_name", "avatar", "email")
+      .where({ id: req.params.id })
+      .then((users) => res.json(...users))
+      .catch((err) =>
+        res.status(500).send({ message: "Internal Server Error" })
+      );
+  }
+
+  return { list, create, edit, findUser };
 };
