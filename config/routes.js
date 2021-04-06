@@ -1,12 +1,13 @@
 const multer = require("multer");
 const multerConfig = require("./multer");
+const cookieParser = require("cookie-parser");
 
 module.exports = (app) => {
   app.get("/health", app.api.health.work);
 
-  app.post("/signin", app.api.auth.signin);
+  app.post("/login", app.api.auth.login);
 
-  app.post("/validateToken", app.api.auth.validateToken);
+  app.post("/validate", cookieParser(), app.api.auth.validate);
 
   // Rotas de usuário
   app.post("/signup", app.api.user.create);
