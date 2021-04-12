@@ -117,7 +117,17 @@ module.exports = (app) => {
   async function list(req, res) {
     app
       .db("products")
-      .select("id", "title", "rating", "images_url as imagesUrl")
+      .select(
+        "id",
+        "title",
+        "rating",
+        "images_url as imagesUrl",
+        "facebook_link as fbLink",
+        "instagram_account as instagram",
+        "author",
+        "price",
+        "description"
+      )
       .from("products")
       .orderBy("rating", "desc")
       .then((products) => {
@@ -149,10 +159,19 @@ module.exports = (app) => {
 
   async function detail(req, res) {
     const { id } = req.params;
-    console.log(id);
     app
       .db("products")
-      .select("*")
+      .select(
+        "id",
+        "title",
+        "rating",
+        "images_url as imagesUrl",
+        "facebook_link as fbLink",
+        "instagram_account as instagram",
+        "author",
+        "price",
+        "description"
+      )
       .where({ id: id })
       .from("products")
       .then((product) => res.json(...product))
