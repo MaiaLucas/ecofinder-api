@@ -55,7 +55,6 @@ module.exports = (app) => {
     const requestImage = req.files;
 
     const data = {
-      id: uuid(),
       email,
       full_name,
       create_at: new Date(),
@@ -80,9 +79,10 @@ module.exports = (app) => {
       .update(data)
       .where({ id: req.params.id })
       .then((_) => res.status(204).send())
-      .catch((err) =>
-        res.status(500).send({ message: "Internal Server Error" })
-      );
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send({ message: "Internal Server Error" });
+      });
 
     console.log(data);
   }
