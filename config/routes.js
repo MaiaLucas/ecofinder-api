@@ -12,6 +12,8 @@ module.exports = (app) => {
   // Rotas de usuário
   app.post("/signup", app.api.user.create);
 
+  app.post("/reset_password", app.api.user.resetPassword);
+
   app.get("/user", app.api.user.list);
 
   app.get("/user/:id", app.api.user.findUser);

@@ -1,8 +1,29 @@
 const bcrypt = require("bcrypt-nodejs");
 import { v4 as uuid } from "uuid";
 import * as Yup from "yup";
+import * as nodemailer from "nodemailer";
 
 module.exports = (app) => {
+  let transport = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "13e0753d100d2d",
+      pass: "6db8719c7fb9de",
+    },
+  });
+
+  async function resetPassword(req, res) {
+    const info = await transport.sendMail({
+      from: "ecofinder@email.com",
+      to: "pessoa@email.com",
+      subject: "Recuperação de Senha",
+      text: "Text",
+      html: /*html*/ `<h1>html</h1>`,
+    });
+    return res.send("Mensagem enviada: %s", info.messageId);
+  }
+
   const encryptPassword = (password) => {
     const salt = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(password, salt);
@@ -111,5 +132,5 @@ module.exports = (app) => {
       );
   }
 
-  return { list, create, edit, findUser };
+  return { list, create, edit, findUser, resetPassword };
 };
