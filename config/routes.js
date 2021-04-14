@@ -12,7 +12,15 @@ module.exports = (app) => {
   // Rotas de usuário
   app.post("/signup", app.api.user.create);
 
-  app.post("/reset_password", app.api.user.resetPassword);
+  app.post("/recover", app.api.user.recover);
+
+  app.get(
+    "/reset_password/:token/:id",
+    cookieParser(),
+    app.api.user.resetPassword
+  );
+
+  app.get("/validate_password/:id", app.api.user.validadePassword);
 
   app.get("/user", app.api.user.list);
 
