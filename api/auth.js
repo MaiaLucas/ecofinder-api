@@ -16,7 +16,6 @@ module.exports = (app) => {
       .digest("hex");
     const user = await app.db("users").where({ email: req.body.email }).first();
 
-    console.log(user);
     if (!user)
       return res.status(400).json({ message: "Usuário não encontrado" });
 
@@ -38,34 +37,16 @@ module.exports = (app) => {
       algorithm: "HS256",
       expiresIn: "2 days",
     });
+    const isMatch = bcrypt.compareSync(req.body.password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Email/Senha inválidos" });
 
-    console.log("sucesso");
     const expTime = 2 * 24 * 60 * 60 * 1000;
     res.cookie("jwt", token, {
       magAge: expTime,
       httpOnly: true,
     });
-    res.json({ token: csrf, user: user.id, expiresIn: expTime });
-
-    // const isMatch = bcrypt.compareSync(req.body.password, user.password);
-
-    // if (!isMatch)
-    //   return res.status(401).json({ message: "Email/Senha inválidos" });
-
-    // const now = Math.floor(Date.now() / 1000);
-
-    // const payload = {
-    //   id: user.id,
-    //   username: user.username,
-    //   email: user.email,
-    //   iat: now,
-    //   exp: now + 60 * 60 * 24,
-    // };
-
-    // res.json({
-    //   ...payload,
-    //   token: jwt.encode(payload, process.env.AUTH_SECRET),
-    // });
+    return res.json({ token: csrf, user: user.id, expiresIn: expTime });
   };
 
   function validate(req, res) {
