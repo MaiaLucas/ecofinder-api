@@ -36,7 +36,7 @@ module.exports = (app) => {
    * /autocomplete?city=fortaleza
    */
   // Exibe os destaques
-  app.get("/dashboard", app.api.places.list);
+  app.get("/dashboard", app.api.places.dashboard);
   // Pesquisa pelos locais
   app.get("/search_place", app.api.places.listByCityType);
 
@@ -45,10 +45,12 @@ module.exports = (app) => {
 
   // Cadastro de um ponto de coleta ou experiencia
   app.post(
-    "/place/create",
+    "/place",
     multer(multerConfig).array("images"),
     app.api.places.create
   );
+
+  app.get("/place", app.api.places.list);
 
   // Exibe os detalhes de um ponto de coleta ou experiencia
   app.get("/place/detail/:id", app.api.places.placeDetail);
@@ -76,4 +78,9 @@ module.exports = (app) => {
   app.get("/product/search", app.api.store.search);
 
   app.get("/product/:id", app.api.store.detail);
+
+  //Rotas relacionadas a classificação de um local ou produto
+  app.post("/rating", app.api.rating.create);
+
+  app.get("/rating", app.api.rating.getRating);
 };

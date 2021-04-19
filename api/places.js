@@ -17,6 +17,7 @@ module.exports = (app) => {
       hr_final,
       open_on_weekend,
       description,
+      author,
     } = req.body;
 
     const requestImages = req.files;
@@ -40,6 +41,7 @@ module.exports = (app) => {
       images_url: { images },
       create_at: new Date(),
       update_at: new Date(),
+      author,
     };
 
     const schema = Yup.object().shape({
@@ -67,15 +69,25 @@ module.exports = (app) => {
       return res.status(400).json({ message: errors });
     }
 
-    app
-      .db("places")
-      .insert(data)
-      .then((_) =>
-        res.status(200).json({ message: "Local cadastrado com sucesso!" })
-      )
-      .catch((err) => {
-        res.status(500).send({ message: "Internal Server Error" });
-      });
+    try {
+      await app.db("places").insert(data);
+
+      const response = await app
+        .db("places")
+        .select("id", "title")
+        .from("places")
+        .orderBy("create_at", "desc")
+        .limit(1);
+
+      await app
+        .db("rating")
+        .insert({ place: response[0].id, author, rating: 5.0 });
+
+      res.status(200).json({ message: "Local cadastrado com sucesso!" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
   }
 
   /**
@@ -143,7 +155,35 @@ module.exports = (app) => {
    * função responsável por listar os locais ordenando por classificação,
    * @param {*} page responsável pelo limite da listagem
    */
-  function list(req, res) {
+  async function list(req, res) {
+    const page = !req.query.page ? 7 : req.query.page;
+
+    try {
+      // "places.id",
+      // "title",
+      // "rating.rating",
+      // "images_url as imagesUrl",
+      // "type",
+      // "places.author"
+      const places = await app
+        .db("places")
+        .select({
+          id: "places.id",
+          rating: app.db("rating").avg("rating").where("place", "places.id"),
+        })
+        .from("places")
+        .join("rating", "places.id", "rating.place")
+        // .where("places.id", 6)
+        .distinct();
+
+      res.status(200).json(places);
+    } catch (error) {
+      console.log(error);
+      res.status(422).json(error);
+    }
+  }
+
+  async function dashboard(req, res) {
     const page = !req.query.page ? 7 : req.query.page;
     app
       .db("places")
@@ -267,5 +307,6 @@ module.exports = (app) => {
     listByCityType,
     cities,
     placeDetail,
+    dashboard,
   };
 };
