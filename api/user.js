@@ -191,8 +191,8 @@ ${header}
     res.cookie("jwt", token, { magAge: expTime, httpOnly: true });
 
     await transport.sendMail({
-      to: "suport@ecofinder.com",
-      from: "pessoa@email.com",
+      to: email,
+      from: "suporte@ecofinder.com.br",
       subject: "Recuperação de Senha",
       text: "Recuperação de senha",
       html: /*html*/ `
