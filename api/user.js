@@ -221,6 +221,13 @@ ${header}
       update_at: new Date(),
     };
 
+    const user = await app.db("users").where({ email: email }).first();
+
+    if (user)
+      return res
+        .status(422)
+        .json({ message: "Já existe um usuário com esse e-mail" });
+
     const schema = Yup.object().shape({
       email: Yup.string().email().required("Campo E-mail é obrigatório"),
       password: Yup.string().required("Campo Senha é obrigatório"),
@@ -230,6 +237,8 @@ ${header}
       ),
       full_name: Yup.string(),
     });
+
+    console.log("chegou");
 
     try {
       await schema.validate(data, { abortEarly: false });
@@ -242,10 +251,36 @@ ${header}
     app
       .db("users")
       .insert(data)
-      .then((_) => res.status(204).send())
+      .then((user) => {
+        const payload = {
+          email: email,
+          type: "access",
+        };
+
+        const csrfPayload = {
+          email: email,
+          type: "csrf",
+        };
+
+        const token = jwt.sign(payload, process.env.AUTH_SECRET, {
+          algorithm: "HS256",
+          expiresIn: "2 days",
+        });
+        const csrf = jwt.sign(csrfPayload, process.env.AUTH_SECRET, {
+          algorithm: "HS256",
+          expiresIn: "2 days",
+        });
+
+        const expTime = 2 * 24 * 60 * 60 * 1000;
+        res.cookie("jwt", token, {
+          magAge: expTime,
+          httpOnly: true,
+        });
+        return res.json({ token: csrf, user: data.id, expiresIn: expTime });
+      })
       .catch((err) => {
-        console.log(err);
-        res.status(500).send({ message: "Internal Server Error" });
+        console.log("err", err);
+        res.status(500).json({ message: "Internal Server Error" });
       });
   }
 

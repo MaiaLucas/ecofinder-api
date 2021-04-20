@@ -10,7 +10,7 @@ module.exports = (app) => {
   app.post("/validate", cookieParser(), app.api.auth.validate);
 
   // Rotas de usuário
-  app.post("/signup", app.api.user.create);
+  app.post("/signup", cookieParser(), app.api.user.create);
 
   app.post("/recover", app.api.user.recover);
 
