@@ -26,8 +26,10 @@ module.exports = {
 
   production: {
     client: "pg",
-    connection: process.env.DATABASE_URL, // + `postgres://fdsgoajmcobuyb:fc7456ca634a09f82354d666ce7729e15f7579782244147f7feb6d390053c5ea@ec2-54-164-22-242.compute-1.amazonaws.com:5432/d5g4ibnlq737l4?ssl=true`,
-    ssl: true,
+    connection: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
     migrations: {
       // tableName: "knex_migrations",
       directory: __dirname + "/migrations",
