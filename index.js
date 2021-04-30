@@ -5,7 +5,6 @@ const morgan = require("morgan");
 const AWS = require("aws-sdk");
 const app = express();
 
-const bucketName = "ecofinder-api-images-e28841c6-b9c1-4675-baa7-a0d2a11151a1";
 AWS.config.getCredentials(function (err) {
   console.log("has credentials");
 });
