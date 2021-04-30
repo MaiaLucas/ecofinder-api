@@ -163,8 +163,10 @@ ${header}
   }
 
   async function recover(req, res) {
-    const { email } = req.body;
-    if (!email) return res.status(422).json({ error: "E-mail inválido" });
+    const { email } = req.query;
+
+    if (!email)
+      return res.status(422).json({ error: "E-mail não encontrado!" });
 
     const findEmail = await app
       .db("users")
@@ -190,16 +192,16 @@ ${header}
 
     res.cookie("jwt", token, { magAge: expTime, httpOnly: true });
 
-    await transport.sendMail({
-      to: email,
-      from: "suporte@ecofinder.com.br",
-      subject: "Recuperação de Senha",
-      text: "Recuperação de senha",
-      html: /*html*/ `
-      <h6>Vamos Recuperar sua senha!</h6>
-      <a href="http://localhost:4040/reset_password/${token}/${findEmail[0].id}">Clique aqui</a>
-      `,
-    });
+    // await transport.sendMail({
+    //   to: email,
+    //   from: "suporte@ecofinder.com.br",
+    //   subject: "Recuperação de Senha",
+    //   text: "Recuperação de senha",
+    //   html: /*html*/ `
+    //   <h6>Vamos Recuperar sua senha!</h6>
+    //   <a href="http://localhost:4040/reset_password/${token}/${findEmail[0].id}">Clique aqui</a>
+    //   `,
+    // });
     return res.status(200).json({ message: "E-mail enviado com sucesso!" });
   }
 
@@ -226,7 +228,7 @@ ${header}
     if (user)
       return res
         .status(422)
-        .json({ message: "Já existe um usuário com esse e-mail" });
+        .json({ error: "Já existe um usuário com esse e-mail" });
 
     const schema = Yup.object().shape({
       email: Yup.string().email().required("Campo E-mail é obrigatório"),
@@ -238,12 +240,10 @@ ${header}
       full_name: Yup.string(),
     });
 
-    console.log("chegou");
-
     try {
       await schema.validate(data, { abortEarly: false });
     } catch (error) {
-      return res.status(400).json({ message: error });
+      return res.status(400).json({ error: error.errors });
     }
 
     delete data.confirm_password;

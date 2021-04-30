@@ -8,16 +8,11 @@ require("dotenv").config();
 module.exports = (app) => {
   const login = async (req, res) => {
     if (!req.body.email || !req.body.password)
-      return res.status(400).json({ message: "Favor informar email e senha!" });
+      return res.status(400).json({ error: "Favor informar email e senha!" });
 
-    const password = crypto
-      .createHash("sha256")
-      .update(req.body.password)
-      .digest("hex");
     const user = await app.db("users").where({ email: req.body.email }).first();
 
-    if (!user)
-      return res.status(400).json({ message: "Usuário não encontrado" });
+    if (!user) return res.status(400).json({ error: "Usuário não encontrado" });
 
     const payload = {
       email: req.body.username,
@@ -39,7 +34,7 @@ module.exports = (app) => {
     });
     const isMatch = bcrypt.compareSync(req.body.password, user.password);
     if (!isMatch)
-      return res.status(401).json({ message: "Email/Senha inválidos" });
+      return res.status(401).json({ error: "Email/Senha inválidos" });
 
     const expTime = 2 * 24 * 60 * 60 * 1000;
     res.cookie("jwt", token, {
