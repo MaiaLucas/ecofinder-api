@@ -2,9 +2,6 @@ import * as Yup from "yup";
 module.exports = (app) => {
   const { isEmpty } = app.api.validation;
 
-  /**
-   * função responsável por cadastrar um local
-   */
   async function create(req, res) {
     const {
       title,
@@ -15,17 +12,20 @@ module.exports = (app) => {
       rating,
       hr_init,
       hr_final,
+      images_url,
       open_on_weekend,
       description,
       author,
     } = req.body;
 
     const requestImages = req.files;
-    const images = requestImages.map((image) => {
-      return {
-        path: image.location,
-      };
-    });
+    const images =
+      requestImages &&
+      requestImages.map((image) => {
+        return {
+          path: image.location,
+        };
+      });
 
     const data = {
       title,
@@ -38,7 +38,7 @@ module.exports = (app) => {
       hr_final,
       open_on_weekend: open_on_weekend === "true",
       description,
-      images_url: { images },
+      images_url: images_url || { images },
       create_at: new Date(),
       update_at: new Date(),
       author,
@@ -66,7 +66,7 @@ module.exports = (app) => {
       await schema.validate(data, { abortEarly: false });
     } catch (error) {
       const { errors } = error;
-      return res.status(400).json({ message: errors });
+      return res.status(400).json({ error: errors });
     }
 
     try {
@@ -86,13 +86,10 @@ module.exports = (app) => {
       res.status(200).json({ message: "Local cadastrado com sucesso!" });
     } catch (error) {
       console.log(error);
-      res.status(500).send({ message: "Internal Server Error" });
+      res.status(500).send({ error: "Internal Server Error" });
     }
   }
 
-  /**
-   * função responsável por editar um local
-   */
   function edit(req, res) {
     const place = { ...req.body };
 
@@ -134,9 +131,6 @@ module.exports = (app) => {
       );
   }
 
-  /**
-   * função responsável por deletar um local
-   */
   async function remove(req, res) {
     console.log(req.params);
     try {
@@ -151,32 +145,13 @@ module.exports = (app) => {
     }
   }
 
-  /**
-   * função responsável por listar os locais ordenando por classificação,
-   * @param {*} page responsável pelo limite da listagem
-   */
   async function list(req, res) {
     const page = !req.query.page ? 7 : req.query.page;
 
     try {
-      // "places.id",
-      // "title",
-      // "rating.rating",
-      // "images_url as imagesUrl",
-      // "type",
-      // "places.author"
-      const places = await app
-        .db("places")
-        .select({
-          id: "places.id",
-          rating: app.db("rating").avg("rating").where("place", "places.id"),
-        })
-        .from("places")
-        .join("rating", "places.id", "rating.place")
-        // .where("places.id", 6)
-        .distinct();
+      const places = await app.db("places").select("*").from("places");
 
-      res.status(200).json(places);
+      res.status(200).json({ length: places.length, places });
     } catch (error) {
       console.log(error);
       res.status(422).json(error);
@@ -208,10 +183,6 @@ module.exports = (app) => {
       });
   }
 
-  /**
-   * exibe os dados de um local especifico a partir do id
-   * @param {Integer} id id do local
-   */
   async function placeDetail(req, res) {
     const { id } = req.params;
     app
@@ -239,11 +210,6 @@ module.exports = (app) => {
       });
   }
 
-  /**
-   * função responsável por listar os locais ordenando por classificação,
-   * @param {*} city responsável pela busca por cidade
-   * @param {*} type responsável pela filtragem por tipo
-   */
   async function listByCityType(req, res) {
     const type = !req.query.type ? "" : req.query.type;
     const city = !req.query.city ? "" : req.query.city;
@@ -271,9 +237,6 @@ module.exports = (app) => {
       });
   }
 
-  /**
-   * função responsável por listar as cidades ao pesquisar
-   */
   async function cities(req, res) {
     const city = !req.query.city ? "" : req.query.city.toLowerCase();
     const places = await app.db.raw(
