@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 module.exports = (app) => {
   app.get("/health", app.api.health.work);
 
+  app.post("/upload", multer(multerConfig).array("images"), app.api.images);
+
   app.post("/login", app.api.auth.login);
 
   app.post("/validate", cookieParser(), app.api.auth.validate);
@@ -28,22 +30,9 @@ module.exports = (app) => {
 
   app.put("/user/:id", multer(multerConfig).array("image"), app.api.user.edit);
 
-  // Rotas para aba de locais
-  /**
-   * exemplos:
-   * /dashboard?page=1
-   * /search_place?city=fortaleza&type=1
-   * /autocomplete?city=fortaleza
-   */
-  // Exibe os destaques
   app.get("/dashboard", app.api.places.dashboard);
-  // Pesquisa pelos locais
   app.get("/search_place", app.api.places.listByCityType);
 
-  //Retorna as cidades que estão sendo buscadas
-  app.get("/cities", app.api.places.cities);
-
-  // Cadastro de um ponto de coleta ou experiencia
   app.post(
     "/place",
     multer(multerConfig).array("images"),
@@ -52,13 +41,10 @@ module.exports = (app) => {
 
   app.get("/place", app.api.places.list);
 
-  // Exibe os detalhes de um ponto de coleta ou experiencia
   app.get("/place/detail/:id", app.api.places.placeDetail);
 
-  // Remove um ponto de coleta ou experiencia
   app.post("/place/remove/:id", app.api.places.remove);
 
-  // Rotas para aba de produtos
   app.post(
     "/product",
     multer(multerConfig).array("images"),
@@ -79,7 +65,6 @@ module.exports = (app) => {
 
   app.get("/product/:id", app.api.store.detail);
 
-  //Rotas relacionadas a classificação de um local ou produto
   app.post("/rating", app.api.rating.create);
 
   app.get("/rating", app.api.rating.getRating);
