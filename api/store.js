@@ -4,14 +4,17 @@ module.exports = (app) => {
   async function create(req, res) {
     const { title, instagram_account, facebook_link, author, price } = req.body;
 
-    if (!author) res.status(500).send({ message: "Internal Server Error" });
+    // if (!author)
+    // return res.status(500).send({ error: "Internal Server Error" });
 
     const requestImages = req.files;
-    const images = requestImages.map((image) => {
-      return {
-        path: image.location,
-      };
-    });
+    const images =
+      requestImages &&
+      requestImages.map((image) => {
+        return {
+          path: image.location,
+        };
+      });
     const random = Math.random() * 10;
     const rating = random > 5 ? random - 5 : random;
 
@@ -38,14 +41,16 @@ module.exports = (app) => {
       await schema.validate(data, { abortEarly: false });
     } catch (error) {
       const { errors } = error;
-      return res.status(400).json({ message: errors });
+      return res.status(400).json({ error: errors });
     }
 
-    app
-      .db("products")
-      .insert(data)
-      .then((_) => res.status(200).json({ message: "Produto cadastrado" }))
-      .catch((err) => res.status(500));
+    try {
+      await app.db("products").insert(data);
+      return res.status(200).json({ message: "Produto criado" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 
   async function edit(req, res) {
@@ -110,11 +115,8 @@ module.exports = (app) => {
     }
   }
 
-  /**
-   * LISTAGEM
-   */
-
   async function list(req, res) {
+    const orderBy = req.query.order_by || "asc";
     app
       .db("products")
       .select(
@@ -129,9 +131,9 @@ module.exports = (app) => {
         "description"
       )
       .from("products")
-      .orderBy("rating", "desc")
+      .orderBy("id", orderBy)
       .then((products) => {
-        res.json(products);
+        res.json({ length: products.length, products });
       })
       .catch((err) => {
         console.log(err);
