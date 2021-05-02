@@ -27,6 +27,8 @@ module.exports = (app) => {
         };
       });
 
+    console.log(images);
+
     const data = {
       title,
       type,
@@ -72,16 +74,16 @@ module.exports = (app) => {
     try {
       await app.db("places").insert(data);
 
-      const response = await app
+      await app
         .db("places")
         .select("id", "title")
         .from("places")
         .orderBy("create_at", "desc")
         .limit(1);
 
-      await app
-        .db("rating")
-        .insert({ place: response[0].id, author, rating: 5.0 });
+      // await app
+      //   .db("rating")
+      //   .insert({ place: response[0].id, author, rating: 5.0 });
 
       res.status(200).json({ message: "Local cadastrado com sucesso!" });
     } catch (error) {
@@ -141,15 +143,20 @@ module.exports = (app) => {
 
       rowsDeleted && res.status(204).send();
     } catch (msg) {
+      console.log(msg);
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
 
   async function list(req, res) {
-    const page = !req.query.page ? 7 : req.query.page;
+    const orderBy = req.query.order_by || "asc";
 
     try {
-      const places = await app.db("places").select("*").from("places");
+      const places = await app
+        .db("places")
+        .select("*")
+        .from("places")
+        .orderBy("id", orderBy);
 
       res.status(200).json({ length: places.length, places });
     } catch (error) {
