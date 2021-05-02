@@ -5,8 +5,6 @@ const cookieParser = require("cookie-parser");
 module.exports = (app) => {
   app.get("/health", app.api.health.work);
 
-  app.post("/upload", multer(multerConfig).array("images"), app.api.images);
-
   app.post("/login", app.api.auth.login);
 
   app.post("/validate", cookieParser(), app.api.auth.validate);
@@ -38,7 +36,6 @@ module.exports = (app) => {
     multer(multerConfig).array("images"),
     app.api.places.create
   );
-
   app.get("/place", app.api.places.list);
 
   app.get("/place/detail/:id", app.api.places.placeDetail);
