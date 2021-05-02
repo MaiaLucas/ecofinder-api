@@ -21,7 +21,7 @@ consign()
   .into(app);
 
 app.get("/", (req, res) => {
-  res.send(`<h1>Master working ${process.env.DATABASE_URL}</h1>`);
+  res.send(`<h1>API tá funcionando!</h1>`);
 });
 
 app.use(express.json());
