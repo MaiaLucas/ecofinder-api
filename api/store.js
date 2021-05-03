@@ -2,7 +2,14 @@ import * as Yup from "yup";
 
 module.exports = (app) => {
   async function create(req, res) {
-    const { title, instagram_account, facebook_link, author, price } = req.body;
+    const {
+      title,
+      instagram_account,
+      facebook_link,
+      author,
+      price,
+      description,
+    } = req.body;
 
     // if (!author)
     // return res.status(500).send({ error: "Internal Server Error" });
@@ -27,6 +34,7 @@ module.exports = (app) => {
       update_at: new Date(),
       author,
       price,
+      description,
       rating: parseFloat(rating.toFixed(3)),
     };
 
