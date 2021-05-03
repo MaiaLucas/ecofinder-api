@@ -165,6 +165,8 @@ ${header}
   async function recover(req, res) {
     const { email } = req.query;
 
+    console.log(email);
+
     if (!email)
       return res.status(422).json({ error: "E-mail não encontrado!" });
 
@@ -192,16 +194,16 @@ ${header}
 
     res.cookie("jwt", token, { magAge: expTime, httpOnly: true });
 
-    // await transport.sendMail({
-    //   to: email,
-    //   from: "suporte@ecofinder.com.br",
-    //   subject: "Recuperação de Senha",
-    //   text: "Recuperação de senha",
-    //   html: /*html*/ `
-    //   <h6>Vamos Recuperar sua senha!</h6>
-    //   <a href="http://localhost:4040/reset_password/${token}/${findEmail[0].id}">Clique aqui</a>
-    //   `,
-    // });
+    await transport.sendMail({
+      to: email,
+      from: "suporte@ecofinder.com.br",
+      subject: "Recuperação de Senha",
+      text: "Recuperação de senha",
+      html: /*html*/ `
+      <h6>Vamos Recuperar sua senha!</h6>
+      <a href="http://localhost:4040/reset_password/${token}/${findEmail[0].id}">Clique aqui</a>
+      `,
+    });
     return res.status(200).json({ message: "E-mail enviado com sucesso!" });
   }
 
