@@ -115,7 +115,7 @@ exports.up = function (knex) {
       },
       city: "Fortaleza",
       rating: 4.7,
-      address: "Av. Beira Mar",
+      address: "Av. Beira Mar, Meireles",
       phone: "(85) 3105-1444",
       hr_init: "06:00",
       hr_final: "22:00",
