@@ -287,7 +287,8 @@ ${header}
   }
 
   async function edit(req, res) {
-    if (!req.params.id) res.status(500).send();
+    if (!req.params.id)
+      return res.status(401).json({ error: "Edição não autorizada" });
     const { email, full_name } = req.body;
 
     const requestImage = req.files;
@@ -295,10 +296,9 @@ ${header}
     const data = {
       email,
       full_name,
-      create_at: new Date(),
       update_at: new Date(),
-      avatar: requestImage[0]["location"],
     };
+    if (requestImage.length) data.avatar = requestImage[0]["location"];
 
     const schema = Yup.object().shape({
       email: Yup.string().email(),
@@ -308,18 +308,18 @@ ${header}
     try {
       await schema.validate(data, { abortEarly: false });
     } catch (error) {
-      return res.status(400).json({ message: error });
+      console.log(error);
+      return res.status(422).json({ message: error });
     }
 
-    delete data.confirm_password;
     app
       .db("users")
       .update(data)
       .where({ id: req.params.id })
-      .then((_) => res.status(204).send())
+      .then((_) => res.status(200).json({ message: "Usuário editado" }))
       .catch((err) => {
         console.log(err);
-        res.status(500).send({ message: "Internal Server Error" });
+        res.status(500).json({ error: "Internal Server Error" });
       });
   }
 
