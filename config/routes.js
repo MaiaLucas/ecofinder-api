@@ -26,7 +26,7 @@ module.exports = (app) => {
 
   app.get("/user/:id", app.api.user.findUser);
 
-  app.put("/user/:id", multer(multerConfig).array("image"), app.api.user.edit);
+  app.put("/user/:id", multer(multerConfig).array("avatar"), app.api.user.edit);
 
   app.get("/dashboard", app.api.places.dashboard);
   app.get("/search_place", app.api.places.listByCityType);
